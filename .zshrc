@@ -98,6 +98,7 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 #
-path+=('$HOME/.cargo/bin')
+path+=($HOME'/.cargo/bin')
+path+=($HOME'/.local/bin')
 
 export PATH
