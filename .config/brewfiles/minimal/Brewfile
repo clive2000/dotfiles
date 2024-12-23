@@ -51,3 +51,4 @@ cask "visual-studio-code"
 # Fonts
 cask "font-cascadia-code"
 cask "font-caskaydia-mono-nerd-font"
+cask "font-hack-nerd-font"

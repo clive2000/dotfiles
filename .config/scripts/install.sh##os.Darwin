@@ -16,7 +16,6 @@ if [ -d "$HOME/.config/brewfiles" ]; then
     brew bundle install --file="$HOME/.config/brewfiles/coding/Brewfile"
 fi
 
-
 # Check if oh-my-zsh is installed
 if [ -d "$HOME/.oh-my-zsh" ]; then
     echo "Oh My Zsh is already installed."
@@ -27,7 +26,6 @@ else
 fi
 
 # Set zsh-plugins and zsh theme
-
 if [ -f "$HOME/.zshrc" ]; then
     NEW_THEME='powerlevel10k/powerlevel10k'
     sed -i '' "s|^ZSH_THEME=.*|ZSH_THEME=\"$NEW_THEME\"|" "$HOME/.zshrc"
