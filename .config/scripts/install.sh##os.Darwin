@@ -1,3 +1,50 @@
-#!/bin/bash
+#!/bin/zsh
 
 echo "Installing for MacOS"
+
+[ "$BASH_VERSION" ] && echo bash
+[ "$ZSH_VERSION" ] && echo zsh
+[ "$KSH_VERSION" ] && echo ksh
+
+
+# Brewfile
+
+# Check if oh-my-zsh is installed
+if [ -d "$HOME/.oh-my-zsh" ]; then
+    echo "Oh My Zsh is already installed."
+else
+    echo "Installing Oh My Zsh..."
+    # Use the official oh-my-zsh installation command
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+fi
+
+# Set zsh-plugins and zsh theme
+
+if [ -f "$HOME/.zshrc" ]; then
+    NEW_THEME='powerlevel10k/powerlevel10k'
+    sed -i '' "s/^ZSH_THEME=.*/ZSH_THEME=\"${NEW_THEME}\"/g" "$HOME/.zshrc"
+    echo "ZSH theme updated to $NEW_THEME in ~/.zshrc."
+else
+
+
+# sed -i 's|^plugins=.*|plugins=(git zsh-autosuggestions zsh-syntax-highlighting)|g' ~/.zshrc
+# sed -i 's|^ZSH_THEME=.*|ZSH_THEME="powerlevel10k/powerlevel10k"|g' ~/.zshrc
+
+# Powerlevel 10k
+if [ -d ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k ]; then
+    echo "Powerlevel10k is already installed"
+else
+    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+fi
+
+## zsh-autosuggestions
+if [ ! -d ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions ]; then
+    git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+fi
+
+## zsh-syntax-highlight
+if [ ! -d ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting ]; then
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+fi
+
+
