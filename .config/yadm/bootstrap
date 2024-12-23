@@ -1,4 +1,5 @@
 #!/bin/sh
 
+# Check OS, if 
 
-echo '123123123'
+# Call into $HOME/.config/scripts/install.sh
