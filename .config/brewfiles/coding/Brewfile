@@ -1,0 +1,10 @@
+# Coding
+brew "git"
+brew "gh"
+brew "colima"
+brew "fnm"
+brew "pgcli"
+brew "pyenv"
+brew "rustup"
+brew "lazygit"
+cask "temurin@17"
