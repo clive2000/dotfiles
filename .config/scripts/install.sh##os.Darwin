@@ -49,3 +49,27 @@ fi
 if [ ! -d ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting ]; then
     git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 fi
+
+echo '123123123'
+
+## Set p10k instant prompt
+BLOCK='# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi'
+
+echo "BLOCK IS ${BLOCK}"
+
+# Path to the .zshrc file
+ZSHRC_FILE="$HOME/.zshrc"
+
+# Check if the block already exists at the start of the file
+if ! grep -Fxq "$BLOCK" "$ZSHRC_FILE"; then
+  # Prepend the block to the file
+  {
+    echo "$BLOCK"
+    cat "$ZSHRC_FILE"
+  } > "${ZSHRC_FILE}.tmp" && mv "${ZSHRC_FILE}.tmp" "$ZSHRC_FILE"
+fi
