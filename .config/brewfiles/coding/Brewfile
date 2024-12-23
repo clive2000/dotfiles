@@ -8,3 +8,12 @@ brew "pyenv"
 brew "rustup"
 brew "lazygit"
 cask "temurin@17"
+
+
+# Dependencies for pyenv
+brew "openssl"
+brew "readline"
+brew "sqlite3"
+brew "xz"
+brew "zlib"
+brew "tcl-tk@8"

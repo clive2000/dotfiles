@@ -10,6 +10,13 @@ if ! command -v brew >/dev/null 2>&1; then
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 fi
 
+# Install brewfiles
+if [ -d "$HOME/.config/brewfiles" ]; then
+    brew bundle install --file="$HOME/.config/brewfiles/minimal/Brewfile"
+    brew bundle install --file="$HOME/.config/brewfiles/coding/Brewfile"
+fi
+
+
 # Check if oh-my-zsh is installed
 if [ -d "$HOME/.oh-my-zsh" ]; then
     echo "Oh My Zsh is already installed."
