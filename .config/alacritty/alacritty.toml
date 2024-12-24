@@ -1,0 +1,14 @@
+[general]
+import = [
+    "~/.config/alacritty/themes/ayu_mirage.toml"
+]
+
+[env]
+TERM = "xterm-256color"
+
+[font.normal]
+family = "CaskaydiaMono Nerd Font Mono"
+style = "Regular"
+
+[font]
+size = 18

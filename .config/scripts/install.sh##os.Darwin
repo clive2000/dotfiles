@@ -27,6 +27,17 @@ else
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended    
 fi
 
+# Install terminall, if not vm, install kitty, otherwise install alacritty
+# Check if running in a VM
+if [ $(sysctl -n kern.hv_vmm_present) -eq 1 ]; then
+    echo "Running in VM, installing Alacritty..."
+    brew install --cask alacritty
+else
+    echo "Not in VM, installing Kitty..."
+    brew install --cask kitty
+fi
+
+
 # Set zsh-plugins and zsh theme
 if [ -f "$HOME/.zshrc" ]; then
     NEW_THEME='powerlevel10k/powerlevel10k'
@@ -95,5 +106,13 @@ if command -v python3 > /dev/null 2>&1; then
     fi
 else
     echo "Not able to find python3"
+    exit 1
+fi
+
+# Go to mac_wizard.zsh
+if [ -f "$HOME/.config/scripts/mac_wizard.zsh" ]; then
+    zsh "$HOME/.config/scripts/mac_wizard.zsh"
+else
+    echo "Not able to find mac_wizard.zsh"
     exit 1
 fi
