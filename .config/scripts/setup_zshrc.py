@@ -11,6 +11,9 @@ eval "$(pyenv init - zsh)"
 eval "$(atuin init zsh)"
 eval "$(zoxide init zsh)"
 eval "$(fnm env --use-on-cd --shell zsh)"
+
+# Load my custom aliases
+source $HOME/.config/aliases/shell.zsh
 """
 
 zshrc = Path.home()/".zshrc"

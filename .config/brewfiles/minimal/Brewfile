@@ -47,6 +47,7 @@ brew "yadm"
 
 # Cask
 cask "visual-studio-code"
+cask "cursor"
 
 # Fonts
 cask "font-cascadia-code"
