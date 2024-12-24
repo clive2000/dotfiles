@@ -8,6 +8,8 @@ echo "Installing for MacOS"
 if ! command -v brew >/dev/null 2>&1; then
     echo "Installing Homebrew"
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+    echo 'eval $(/opt/homebrew/bin/brew shellenv)' >> /Users/$USER/.zprofile
+    eval $(/opt/homebrew/bin/brew shellenv)
 fi
 
 # Install brewfiles
@@ -22,7 +24,7 @@ if [ -d "$HOME/.oh-my-zsh" ]; then
 else
     echo "Installing Oh My Zsh..."
     # Use the official oh-my-zsh installation command
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended    
 fi
 
 # Set zsh-plugins and zsh theme
@@ -73,3 +75,4 @@ if ! grep -Fxq "$BLOCK" "$ZSHRC_FILE"; then
     cat "$ZSHRC_FILE"
   } > "${ZSHRC_FILE}.tmp" && mv "${ZSHRC_FILE}.tmp" "$ZSHRC_FILE"
 fi
+
