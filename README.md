@@ -1,34 +1,18 @@
 xhuang's dotfiles
 
-# Installed Packages
+## Install xcode command line tools
 
-* zsh
-* oh-my-zsh
-* vim
-* vimrc
-* fzf
-* tldr
-* tmux
-* vtop
-* nnn
-* thefxxx
-* autojump
-* zoxide
-* exa
-* bpytop
-* docker
-* minikube
-* kubectl
-* helm
-* k9s
-* krew
-* 
-
-## Fontconfig
-
-Please installed following configs :
-
-* noto-cjk
-* ibm-plex-mono
+```bash
+xcode-select -p &> /dev/null
+if [ $? -ne 0 ]; then
+  echo "Command Line Tools for Xcode not found. Installing from softwareupdate…"
+# This temporary file prompts the 'softwareupdate' utility to list the Command Line Tools
+  touch /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress;
+  PROD=$(softwareupdate -l | grep "\*.*Command Line" | tail -n 1 | sed 's/^[^C]* //')
+  softwareupdate -i "$PROD" --verbose;
+else
+  echo "Command Line Tools for Xcode have been installed."
+fi
+```
 
 
