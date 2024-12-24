@@ -80,3 +80,20 @@ P10KBLOCK='# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 
 grep -Fxq "$P10KBLOCK" "$ZSHRC_FILE" || echo "$P10KBLOCK" >> "$ZSHRC_FILE"
 
+if [ -f "$HOME/.zshrc" ]; then
+    NEW_THEME='powerlevel10k/powerlevel10k'
+    sed -i '' "s|^ZSH_THEME=.*|ZSH_THEME=\"$NEW_THEME\"|" "$HOME/.zshrc"
+    echo "ZSH theme updated to $NEW_THEME in ~/.zshrc."
+    sed -i '' 's|^plugins=.*|plugins=(git zsh-autosuggestions zsh-syntax-highlighting)|g' "$HOME/.zshrc"
+fi
+
+if command -v python3 > /dev/null 2>&1; then
+    if [ -f "$HOME/.config/scripts/setup_zshrc.py" ]; then
+        python3 "$HOME/.config/scripts/setup_zshrc.py"
+    else
+        echo "Not able to find setup_zshrc.py"
+    fi
+else
+    echo "Not able to find python3"
+    exit 1
+fi
