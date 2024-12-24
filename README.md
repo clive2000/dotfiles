@@ -1,5 +1,11 @@
 xhuang's dotfiles
 
+## Install yadm
+
+```
+sudo mkdir -p /usr/local/bin
+sudo curl -fLo /usr/local/bin/yadm https://github.com/yadm-dev/yadm/raw/master/yadm && sudo chmod a+x /usr/local/bin/yadm
+
 ## Install xcode command line tools
 
 ```bash
