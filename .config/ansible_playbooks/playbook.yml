@@ -1,0 +1,26 @@
+---
+- name: "Provision Machine"
+  hosts: all
+  serial: 1
+
+  pre_tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+      when: ansible_os_family == "Debian"
+    - name: Update yum cache
+      yum:
+        update_cache: yes
+      when: ansible_os_family == "RedHat"
+    - name: Update zypper cache
+      zypper:
+        update_cache: yes
+      when: ansible_os_family == "Suse"
+
+  tasks:
+    - name: showmsg
+      debug:
+        msg: "{{item}}"
+      with_items:
+        - "{{ansible_distribution}}"
+        - "{{ansible_user}}"
