@@ -1,9 +1,16 @@
 ---
 - name: "Provision Machine"
+  gather_facts: yes
   hosts: all
+  roles:
+    - common
   serial: 1
 
   pre_tasks:
+    - name: Capture the original user
+      set_fact:
+        original_user: "{{ ansible_user_name }}"
+      run_once: true # Only need to do this once
     - name: Update apt cache
       apt:
         update_cache: yes
@@ -16,11 +23,20 @@
       zypper:
         update_cache: yes
       when: ansible_os_family == "Suse"
+    - name: Check for virtualization facts
+      debug:
+        msg: |
+          Virtualization role: {{ ansible_virtualization_role }}
+          Virtualization type: {{ ansible_virtualization_type }}
+      when: ansible_virtualization_role is defined or ansible_virtualization_type is defined
 
   tasks:
     - name: showmsg
       debug:
-        msg: "{{item}}"
+        msg: "{{item}}\n"
       with_items:
         - "{{ansible_distribution}}"
-        - "{{ansible_user}}"
+        - "{{ansible_user_id }}"
+        - "{{ansible_env.HOME}}"
+        - "{{ansible_user_dir }}"
+        - "{{original_user}}"
