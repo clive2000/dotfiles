@@ -1,0 +1,133 @@
+---
+- name: Install common packages across all os
+  become: true
+  ansible.builtin.package:
+    name: "{{ common_packages }}"
+    state: present
+
+- name: Perform packages for specific ansible_os_family
+  include_tasks: "{{ansible_distribution|lower}}.yml"
+
+- name: Check if oh my zsh is already installed
+  become: false
+  ansible.builtin.stat:
+    path: ~/.oh-my-zsh
+  register: omz_directory_check
+
+- name: Set a variable based on directory's existence
+  set_fact:
+    omz_directory_exists: "{{ omz_directory_check.stat.exists and omz_directory_check.stat.isdir }}"
+
+- name: Install Oh My Zsh # noqa: latest
+  become: false
+  ansible.builtin.git:
+    repo: https://github.com/ohmyzsh/ohmyzsh.git
+    dest: ~/.oh-my-zsh
+    depth: 1
+  when: not omz_directory_exists
+
+- name: Check if ~/.zshrc exists
+  become: false
+  stat:
+    path: "~/.zshrc"
+  register: zshrc_check
+
+- name: Backup ~/.zshrc if it exists
+  become: false
+  copy:
+    remote_src: yes # This is important when working on the target machine
+    src: "~/.zshrc"
+    dest: "~/.zshrc.orig"
+  when: zshrc_check.stat.exists and not omz_directory_exists
+  ignore_errors: true
+
+- name: Create .zshrc from template
+  become: false
+  copy:
+    force: true
+    remote_src: yes # This is important when working on the target machine
+    src: "~/.oh-my-zsh/templates/zshrc.zsh-template"
+    dest: "~/.zshrc"
+  when: not omz_directory_exists
+
+- name: Install zsh-autosuggestions plugin # noqa: latest
+  become: false
+  ansible.builtin.git:
+    repo: https://github.com/zsh-users/zsh-autosuggestions
+    dest: ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+    depth: 1
+
+- name: Install zsh-syntax-highlighting plugin # noqa: latest
+  become: false
+  ansible.builtin.git:
+    repo: https://github.com/zsh-users/zsh-syntax-highlighting.git
+    dest: ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
+    depth: 1
+
+- name: Install you-should-use plugin # noqa: latest
+  become: false
+  ansible.builtin.git:
+    repo: https://github.com/MichaelAquilina/zsh-you-should-use.git
+    dest: ~/.oh-my-zsh/custom/plugins/you-should-use
+    depth: 1
+
+- name: Change shell to zsh
+  user:
+    name: "{{ original_user }}"  # Get the current user (more on this below)
+    shell: /bin/zsh
+    update_password: on_create # On creating the user, set the password
+
+- name: Enable Oh My Zsh plugins
+  become: false
+  lineinfile:
+    path: "/home/{{ original_user }}/.zshrc"
+    regexp: '^plugins=\(.*\)$'
+    line: "plugins=({{ oh_my_zsh_plugins | join(' ') }})"
+    state: present
+  when: zshrc_check.stat.exists
+
+
+
+# p10k
+- name: Add text block to top of .zshrc
+  blockinfile:
+    path: "/home/{{ original_user }}/.zshrc"
+    block: |
+      # === START MY CUSTOM BLOCK ===
+      # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+      # Initialization code that may require console input (password prompts, [y/n]
+      # confirmations, etc.) must go above this block; everything else may go below.
+      if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+        source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+      fi
+      # === END MY CUSTOM BLOCK ===
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - MY CUSTOM BLOCK"
+    insertbefore: BOF
+    create: false
+  become: false
+
+- name: Add Powerlevel10k config to end of .zshrc
+  blockinfile:
+    path: "/home/{{ original_user }}/.zshrc"
+    block: |
+      # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+      [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - P10K CONFIG"
+    insertafter: EOF
+    create: false
+  become: false
+
+- name: Set ZSH_THEME to powerlevel10k
+  lineinfile:
+    path: "/home/{{ original_user }}/.zshrc"
+    regexp: '^ZSH_THEME='
+    line: 'ZSH_THEME="powerlevel10k/powerlevel10k"'
+    state: present
+  become: false
+
+- name: Install p10k theme # noqa: latest
+  become: false
+  ansible.builtin.git:
+    repo: https://github.com/romkatv/powerlevel10k.git
+    dest: /home/{{ original_user }}/.oh-my-zsh/custom/themes/powerlevel10k
+    depth: 1

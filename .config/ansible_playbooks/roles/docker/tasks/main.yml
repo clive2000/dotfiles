@@ -1,0 +1,13 @@
+- name: Add docker group
+  group:
+    name: docker
+    state: present
+
+- name: Add the current user to 'mygroup'
+  user:
+    name: "{{ original_user }}" # Get the user from the command line variable
+    groups: docker
+    append: yes
+
+- name: Perform ubuntu install for specifc machine
+  include_tasks: "{{ansible_distribution|lower}}.yml"

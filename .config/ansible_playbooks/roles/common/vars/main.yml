@@ -1,0 +1,17 @@
+---
+common_packages:
+  - git
+  - zsh
+  - curl
+  - wget
+  - vim
+
+common_packages_ubuntu:
+  - apt-transport-https
+
+oh_my_zsh_plugins:
+  - git
+  - zsh-autosuggestions
+  - zsh-syntax-highlighting
+  - you-should-use
+  - aliases

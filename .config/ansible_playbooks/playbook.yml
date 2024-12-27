@@ -4,6 +4,8 @@
   hosts: all
   roles:
     - common
+    - vscode
+    - docker
   serial: 1
 
   pre_tasks:
