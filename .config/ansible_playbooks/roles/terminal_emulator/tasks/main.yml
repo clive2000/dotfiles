@@ -1,0 +1,14 @@
+# Here we install terminal emulator
+# The decision logic on terminal emulator is like this
+# Under aarch64 arch, we install alacritty (Since likely this is runnign in my mac VM)
+# Under amd64 arch, we install kitty 
+
+
+
+- name: Perform Kitty install when the arch is amd64
+  include_tasks: "kitty.yml"
+  when: ansible_architecture == "x86_64"
+
+- name: Perform alacritty install when the arch is amd64
+  include_tasks: "alacritty.yml"
+  when: ansible_architecture == "aarch64"

@@ -3,9 +3,10 @@
   gather_facts: yes
   hosts: all
   roles:
-    - common
-    - vscode
-    - docker
+    # - common
+    # - vscode
+    # - docker
+    - terminal_emulator
   serial: 1
 
   pre_tasks:
