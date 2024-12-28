@@ -99,7 +99,7 @@
     - name: Replace Exec path in kitty*.desktop files
       replace:
         path: "{{ item.path }}"  # Use item.path from the find results
-        regexp: '^Exec=kitty'
+        regexp: 'Exec=kitty'
         replace: "Exec={{ kitty_exec_path.stdout }}"
       loop: "{{ desktop_files.files }}"
       when: kitty_exec_path.stdout is defined
