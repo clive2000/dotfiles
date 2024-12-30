@@ -9,6 +9,6 @@
   include_tasks: "kitty.yml"
   when: ansible_architecture == "x86_64"
 
-- name: Perform alacritty install when the arch is amd64
+- name: Perform alacritty install when the arch is arm64(aarch64)
   include_tasks: "alacritty.yml"
   when: ansible_architecture == "aarch64"
