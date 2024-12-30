@@ -87,6 +87,17 @@
   when: zshrc_check.stat.exists
 
 
+# Add ~/.local/bin to path:
+- name: Export ~/.local/bin to path
+  blockinfile:
+    path: "/home/{{ original_user }}/.zshrc"
+    block: |
+      export PATH="$HOME/.local/bin:$PATH"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - Add ~/.local/bin to PATH"
+    insertafter: EOF
+    create: false
+  become: false
+
 
 # p10k
 - name: Add text block to top of .zshrc
