@@ -8,6 +8,11 @@
     path:  /home/{{ original_user }}/.local/bin/zoxide
   register: zoxide_stat
 
+- name: eza exists
+  ansible.builtin.stat:
+    path: /usr/local/bin/eza
+  register: eza_stat
+
 - name: Install atuin
   when: not atuin_stat.stat.exists
   become: false
