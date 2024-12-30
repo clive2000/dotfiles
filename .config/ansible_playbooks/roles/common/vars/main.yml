@@ -5,6 +5,11 @@ common_packages:
   - curl
   - wget
   - vim
+  - bat
+  - fzf
+  - htop
+  - jq
+  - ripgrep
 
 common_packages_ubuntu:
   - apt-transport-https
