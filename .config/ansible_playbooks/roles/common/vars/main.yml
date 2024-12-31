@@ -5,7 +5,6 @@ common_packages:
   - curl
   - wget
   - vim
-  - bat
   - fzf
   - htop
   - jq
@@ -13,6 +12,10 @@ common_packages:
 
 common_packages_ubuntu:
   - apt-transport-https
+  - bat
+
+common_packages_suse:
+  - bat
 
 oh_my_zsh_plugins:
   - git
