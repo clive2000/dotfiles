@@ -1,4 +1,4 @@
 - name: Install CLI packages (Suse)
-  apt:
+  community.general.zypper:
     name: "{{ cli_common_packages_suse }}"
     state: present
