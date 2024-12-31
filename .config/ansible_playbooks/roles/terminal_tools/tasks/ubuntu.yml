@@ -5,12 +5,12 @@
 
 - name: Atuin exists
   ansible.builtin.stat:
-    path:  /home/{{ original_user }}/.atuin/bin/atuin
+    path: /home/{{ original_user }}/.atuin/bin/atuin
   register: atuin_stat
 
 - name: Zoxide exists
   ansible.builtin.stat:
-    path:  /home/{{ original_user }}/.local/bin/zoxide
+    path: /home/{{ original_user }}/.local/bin/zoxide
   register: zoxide_stat
 
 - name: eza exists
@@ -26,19 +26,19 @@
       ansible.builtin.get_url:
         url: https://github.com/atuinsh/atuin/releases/latest/download/atuin-installer.sh
         dest: /tmp/atuin_installer.sh
-        mode: '0755'
+        mode: "0755"
 
     - name: Execute atuin installer
       ansible.builtin.shell: /tmp/atuin_installer.sh
 
-    - name: Add atuin config to end of .zshrc
-      blockinfile:
-        path: "/home/{{ original_user }}/.zshrc"
-        block: |
-          eval "$(atuin init zsh)"
-        marker: "# {mark} ANSIBLE MANAGED BLOCK - Atuin CONFIG"
-        insertafter: EOF
-        create: false
+- name: Add atuin config to end of .zshrc
+  blockinfile:
+    path: "/home/{{ original_user }}/.zshrc"
+    block: |
+      eval "$(atuin init zsh)"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - Atuin CONFIG"
+    insertafter: EOF
+    create: false
 
 - name: Install zoxide
   when: not zoxide_stat.stat.exists
@@ -48,19 +48,19 @@
       ansible.builtin.get_url:
         url: https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh
         dest: /tmp/zoxide_installer.sh
-        mode: '0755'
+        mode: "0755"
 
     - name: Execute atuin installer
       ansible.builtin.shell: /tmp/zoxide_installer.sh
 
-    - name: Add zoxide config to end of .zshrc
-      blockinfile:
-        path: "/home/{{ original_user }}/.zshrc"
-        block: |
-          eval "$(zoxide init zsh)"
-        marker: "# {mark} ANSIBLE MANAGED BLOCK - Zoxide CONFIG"
-        insertafter: EOF
-        create: false
+- name: Add zoxide config to end of .zshrc
+  blockinfile:
+    path: "/home/{{ original_user }}/.zshrc"
+    block: |
+      eval "$(zoxide init zsh)"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - Zoxide CONFIG"
+    insertafter: EOF
+    create: false
 
 - name: Install eza
   when: not eza_stat.stat.exists
@@ -94,6 +94,4 @@
         remote_src: yes
         owner: root
         group: root
-        mode: '0755'
-
-
+        mode: "0755"
