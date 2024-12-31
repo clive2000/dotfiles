@@ -1,0 +1,4 @@
+- name: Install CLI packages (Suse)
+  apt:
+    name: "{{ cli_common_packages_suse }}"
+    state: present

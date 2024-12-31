@@ -22,16 +22,11 @@
           gpgkey=https://packages.microsoft.com/keys/microsoft.asc
         dest: /etc/zypp/repos.d/vscode.repo
         mode: 0644
-
-    - name: Refresh zypper repositories
-      community.general.zypper:
-        name: "code"
-        state: "present"
-        update_cache: yes
   when: vscode_check.rc != 0
 
 - name: Install VS Code
   community.general.zypper:
     name: code
     state: present
+    update_cache: yes
   when: vscode_check.rc != 0

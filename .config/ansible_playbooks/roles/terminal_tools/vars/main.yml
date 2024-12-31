@@ -14,3 +14,35 @@ cli_common_packages_ubuntu:
   - pv
   - rclone
   - restic
+
+cli_common_packages_suse:
+  - atuin
+  - zoxide
+  - fzf
+  - htop
+  - jq
+  - eza
+  - mosh
+  - git-delta
+  - fd
+  - duf
+  - ncdu
+  - btop
+  - bottom
+  - sd
+  - hexyl
+  - nnn
+  - broot
+  - direnv
+  - magic-wormhole.rs
+  - hyperfine
+  - httpie
+  - lnav
+  - glow
+  - yq
+  - fx
+  - jless
+  - pv
+  - rclone
+  - restic
+  - onefetch
