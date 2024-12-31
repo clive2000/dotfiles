@@ -32,6 +32,7 @@
       ansible.builtin.shell: /tmp/atuin_installer.sh
 
 - name: Add atuin config to end of .zshrc
+  become: false
   blockinfile:
     path: "/home/{{ original_user }}/.zshrc"
     block: |
@@ -54,6 +55,7 @@
       ansible.builtin.shell: /tmp/zoxide_installer.sh
 
 - name: Add zoxide config to end of .zshrc
+  become: false
   blockinfile:
     path: "/home/{{ original_user }}/.zshrc"
     block: |
