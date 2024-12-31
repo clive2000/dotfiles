@@ -1,5 +1,5 @@
 ---
-common_packages:
+cli_common_packages_ubuntu:
   - bat
   - ripgrep
   - fd-find
@@ -7,4 +7,10 @@ common_packages:
   - ncdu
   - btop
   - hexyl
-  -
+  - nnn
+  - direnv
+  - magic-wormhole
+  - hyperfine
+  - pv
+  - rclone
+  - restic

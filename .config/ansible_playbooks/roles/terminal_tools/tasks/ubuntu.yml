@@ -1,6 +1,6 @@
-- name: Install essential packages (Debian/Ubuntu)
+- name: Install CLI packages (Debian/Ubuntu)
   apt:
-    name: "{{ common_packages_ubuntu }}"
+    name: "{{ cli_common_packages_ubuntu }}"
     state: present
 
 - name: Atuin exists
@@ -62,5 +62,38 @@
         insertafter: EOF
         create: false
 
+- name: Install eza
+  when: not eza_stat.stat.exists
+  become: true
+  block:
+    - name: Determine architecture
+      set_fact:
+        eza_arch: "x86_64"
+      when: ansible_architecture == "x86_64"
+
+    - name: Determine architecture
+      set_fact:
+        eza_arch: "aarch64"
+      when: ansible_architecture == "aarch64"
+
+    - name: Download eza
+      get_url:
+        url: "https://github.com/eza-community/eza/releases/latest/download/eza_{{ eza_arch }}-unknown-linux-gnu.tar.gz"
+        dest: /tmp/eza.tar.gz
+
+    - name: Extract eza
+      unarchive:
+        src: /tmp/eza.tar.gz
+        dest: /tmp
+        remote_src: yes
+
+    - name: Move eza to /usr/local/bin
+      copy:
+        src: /tmp/eza
+        dest: /usr/local/bin/eza
+        remote_src: yes
+        owner: root
+        group: root
+        mode: '0755'
 
 

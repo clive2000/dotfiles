@@ -44,6 +44,7 @@ brew "onefetch"
 brew "cheat"
 brew "navi"
 brew "yadm"
+brew "yazi"
 
 # Cask
 cask "visual-studio-code"

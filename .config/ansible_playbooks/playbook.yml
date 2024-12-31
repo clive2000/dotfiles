@@ -4,8 +4,8 @@
   hosts: all
   roles:
     - common
-    # - vscode
-    # - docker
+    - vscode
+    - docker
     - terminal_emulator
     - terminal_tools
   serial: 1
