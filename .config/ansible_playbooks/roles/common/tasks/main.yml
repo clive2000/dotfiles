@@ -6,7 +6,7 @@
     state: present
 
 - name: Perform packages for specific ansible_os_family
-  include_tasks: "{{ansible_distribution|lower}}.yml"
+  include_tasks: "{{ansible_distribution|lower|replace(' ', '_')}}.yml"
 
 - name: Check if oh my zsh is already installed
   become: false
@@ -73,7 +73,7 @@
 
 - name: Change shell to zsh
   user:
-    name: "{{ original_user }}"  # Get the current user (more on this below)
+    name: "{{ original_user }}" # Get the current user (more on this below)
     shell: /bin/zsh
     update_password: on_create # On creating the user, set the password
 
@@ -86,7 +86,6 @@
     state: present
   when: zshrc_check.stat.exists
 
-
 # Add ~/.local/bin to path:
 - name: Export ~/.local/bin to path
   blockinfile:
@@ -97,7 +96,6 @@
     insertafter: EOF
     create: false
   become: false
-
 
 # p10k
 - name: Add text block to top of .zshrc
@@ -131,7 +129,7 @@
 - name: Set ZSH_THEME to powerlevel10k
   lineinfile:
     path: "/home/{{ original_user }}/.zshrc"
-    regexp: '^ZSH_THEME='
+    regexp: "^ZSH_THEME="
     line: 'ZSH_THEME="powerlevel10k/powerlevel10k"'
     state: present
   become: false
