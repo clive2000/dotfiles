@@ -2,6 +2,7 @@
   community.general.zypper:
     name: "{{ common_packages_suse }}"
     state: present
+    update_cache: yes
 
 - name: Install vm spcific packages
   community.general.zypper:

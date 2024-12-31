@@ -23,12 +23,12 @@
       yum:
         update_cache: yes
       when: ansible_os_family == "RedHat"
-    - name: Update zypper cache
-      zypper:
-        name: "*"
-        state: present
-        update_cache: yes
-      when: ansible_os_family == "Suse"
+    # - name: Update zypper cache
+    #   zypper:
+    #     name: "*"
+    #     state: present
+    #     update_cache: yes
+    #   when: ansible_os_family == "Suse"
     - name: Check for virtualization facts
       debug:
         msg: |
