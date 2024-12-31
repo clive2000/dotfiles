@@ -25,7 +25,9 @@
 
     - name: Refresh zypper repositories
       community.general.zypper:
-        refresh_cache: yes
+        name: "code"
+        state: "present"
+        update_cache: yes
   when: vscode_check.rc != 0
 
 - name: Install VS Code
