@@ -1,0 +1,10 @@
+---
+common_packages:
+  - bat
+  - ripgrep
+  - fd-find
+  - duf
+  - ncdu
+  - btop
+  - hexyl
+  -
