@@ -9,7 +9,7 @@ common_packages:
   - fzf
   - htop
   - jq
-  - ripgrep
+  - mosh
 
 common_packages_ubuntu:
   - apt-transport-https

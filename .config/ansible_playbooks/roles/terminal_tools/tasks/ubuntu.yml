@@ -1,3 +1,8 @@
+- name: Install essential packages (Debian/Ubuntu)
+  apt:
+    name: "{{ common_packages_ubuntu }}"
+    state: present
+
 - name: Atuin exists
   ansible.builtin.stat:
     path:  /home/{{ original_user }}/.atuin/bin/atuin
@@ -56,3 +61,6 @@
         marker: "# {mark} ANSIBLE MANAGED BLOCK - Zoxide CONFIG"
         insertafter: EOF
         create: false
+
+
+
