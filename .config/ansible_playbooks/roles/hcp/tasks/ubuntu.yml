@@ -20,10 +20,10 @@
 - name: Dearmor HCP GPG key
   ansible.builtin.shell: gpg --dearmor < /tmp/hashicorp.asc > /tmp/packages.hashicorp.gpg
   args:
-    creates: /tmp/packages.microsoft.gpg
+    creates: /tmp/packages.hashicorp.gpg
   when: hcp_check.rc != 0
 
-- name: Add Hashicorp GPG key to apt keyring
+- name: Add hashicorp GPG key to apt keyring
   ansible.builtin.copy:
     src: /tmp/packages.hashicorp.gpg
     dest: /etc/apt/keyrings/packages.hashicorp.gpg
@@ -33,9 +33,9 @@
     remote_src: yes
   when: hcp_check.rc != 0
 
-- name: Add VS Code repository to apt sources
+- name: Add hashicorp repository to apt sources
   ansible.builtin.apt_repository:
-    repo: "deb [arch=amd64,arm64,armhf signed-by=/usr/share/keyrings/packages.hashicorp.gpg] https://apt.releases.hashicorp.com {{ansible_distribution_release}} main"
+    repo: "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.hashicorp.gpg] https://apt.releases.hashicorp.com {{ansible_distribution_release}} main"
     state: present
     filename: hashicorp
   when: hcp_check.rc != 0
@@ -49,9 +49,9 @@
     - /tmp/packages.hashicorp.gpg
   when: hcp_check.rc != 0
 
-- name: Install HCL
+- name: Install HCP
   apt:
-    name: hcl
+    name: hcp
     state: present
     update_cache: yes
   when: hcp_check.rc != 0

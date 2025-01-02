@@ -6,6 +6,7 @@
     - common
     - vscode
     - docker
+    - hcp
     - terminal_emulator
     - terminal_tools
   serial: 1
