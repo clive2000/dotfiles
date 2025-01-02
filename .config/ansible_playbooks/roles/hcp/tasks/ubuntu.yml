@@ -1,0 +1,57 @@
+- name: Check if HCP is installed
+  ansible.builtin.command: which hcp
+  register: hcp_check
+  ignore_errors: true  # Don't fail if 'which code' returns a non-zero exit code
+
+- name: Install required packages (gpg)
+  apt:
+    name:
+      - gpg
+    state: present
+  when: hcp_check.rc != 0  # Run only if VS Code is NOT installed
+
+- name: Download Hashicorp key
+  ansible.builtin.get_url:
+    url: https://apt.releases.hashicorp.com/gpg
+    dest: /tmp/hashicorp.asc
+    mode: '0644'
+  when: hcp_check.rc != 0
+
+- name: Dearmor HCP GPG key
+  ansible.builtin.shell: gpg --dearmor < /tmp/hashicorp.asc > /tmp/packages.hashicorp.gpg
+  args:
+    creates: /tmp/packages.microsoft.gpg
+  when: hcp_check.rc != 0
+
+- name: Add Hashicorp GPG key to apt keyring
+  ansible.builtin.copy:
+    src: /tmp/packages.hashicorp.gpg
+    dest: /etc/apt/keyrings/packages.hashicorp.gpg
+    owner: root
+    group: root
+    mode: '0644'
+    remote_src: yes
+  when: hcp_check.rc != 0
+
+- name: Add VS Code repository to apt sources
+  ansible.builtin.apt_repository:
+    repo: "deb [arch=amd64,arm64,armhf signed-by=/usr/share/keyrings/packages.hashicorp.gpg] https://apt.releases.hashicorp.com {{ansible_distribution_release}} main"
+    state: present
+    filename: hashicorp
+  when: hcp_check.rc != 0
+
+- name: Clean up temporary files
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /tmp/hashicorp.asc
+    - /tmp/packages.hashicorp.gpg
+  when: hcp_check.rc != 0
+
+- name: Install HCL
+  apt:
+    name: hcl
+    state: present
+    update_cache: yes
+  when: hcp_check.rc != 0
