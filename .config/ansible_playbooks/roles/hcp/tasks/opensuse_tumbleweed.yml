@@ -1,24 +1,39 @@
-- name: Install CLI packages (Suse)
-  community.general.zypper:
-    name: "{{ cli_common_packages_suse }}"
-    state: present
+- name: HCP exists
+  ansible.builtin.stat:
+    path: /usr/local/bin/hcp
+  register: hcp_stat
 
-- name: Add atuin config to end of .zshrc
-  become: false
-  blockinfile:
-    path: "/home/{{ original_user }}/.zshrc"
-    block: |
-      eval "$(atuin init zsh)"
-    marker: "# {mark} ANSIBLE MANAGED BLOCK - Atuin CONFIG"
-    insertafter: EOF
-    create: false
 
-- name: Add zoxide config to end of .zshrc
-  become: false
-  blockinfile:
-    path: "/home/{{ original_user }}/.zshrc"
-    block: |
-      eval "$(zoxide init zsh)"
-    marker: "# {mark} ANSIBLE MANAGED BLOCK - Zoxide CONFIG"
-    insertafter: EOF
-    create: false
+- name: Install hcp
+  when: not hcp_stat.stat.exists
+  become: true
+  block:
+    - name: Determine architecture
+      set_fact:
+        hcp_arch: "amd64"
+      when: ansible_architecture == "x86_64"
+
+    - name: Determine architecture
+      set_fact:
+        hcp_arch: "arm64"
+      when: ansible_architecture == "aarch64"
+
+    - name: Download hcp
+      get_url:
+        url: "https://releases.hashicorp.com/hcp/0.8.0/hcp_0.8.0_linux_{{ hcp_arch }}.zip"
+        dest: /tmp/hcp.zip
+
+    - name: Extract eza
+      unarchive:
+        src: /tmp/hcp.zip
+        dest: /tmp
+        remote_src: yes
+
+    - name: Move eza to /usr/local/bin
+      copy:
+        src: /tmp/hcp
+        dest: /usr/local/bin/hcp
+        remote_src: yes
+        owner: root
+        group: root
+        mode: "0755"
