@@ -22,4 +22,16 @@ else
 fi
 ```
 
+## Scripts
 
+wget
+
+```
+wget -qO- https://raw.githubusercontent.com/clive2000/dotfiles/refs/heads/master/.config/bootstrap/run.sh | bash
+```
+
+curl
+
+```
+curl -sL https://raw.githubusercontent.com/clive2000/dotfiles/refs/heads/master/.config/bootstrap/run.sh | bash
+```
