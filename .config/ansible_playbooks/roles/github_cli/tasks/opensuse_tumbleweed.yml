@@ -1,4 +1,4 @@
-- name: Install essential packages (Suse)
+- name: Install gh (Suse)
   community.general.zypper:
     name:
       - gh

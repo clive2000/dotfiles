@@ -12,10 +12,12 @@ common_packages:
 
 common_packages_ubuntu:
   - apt-transport-https
+  - wireguard-tools
   - bat
 
 common_packages_suse:
   - bat
+  - wireguard-tools
 
 oh_my_zsh_plugins:
   - git
