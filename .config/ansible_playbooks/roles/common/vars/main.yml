@@ -9,6 +9,7 @@ common_packages:
   - htop
   - jq
   - mosh
+  - make
 
 common_packages_ubuntu:
   - apt-transport-https
