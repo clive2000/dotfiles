@@ -1,0 +1,5 @@
+- name: Install essential packages (Suse)
+  community.general.zypper:
+    name:
+      - gh
+    state: present
