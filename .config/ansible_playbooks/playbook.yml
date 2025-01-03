@@ -6,7 +6,7 @@
     - common
     - vscode
     - docker
-    - gh
+    - github_cli
     - hcp
     - terminal_emulator
     - terminal_tools
