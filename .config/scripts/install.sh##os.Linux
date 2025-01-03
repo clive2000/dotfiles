@@ -59,8 +59,8 @@ auth_hcp() {
         echo "Failed to authenticate with HCP, please re-run the script again"
         exit 1
     fi
-    hcp profile set organization_id "${HCP_ORGANIZATION_ID}"
-    hcp profile set project_id "${HCP_PROJECT_ID}"
+    $HCP_BINARY profile set organization_id "${HCP_ORGANIZATION_ID}"
+    $HCP_BINARY profile set project_id "${HCP_PROJECT_ID}"
 }
 
 # Install required dependencies based on detected distribution
@@ -79,7 +79,7 @@ install_dependencies() {
 extract_pgp() {
     # If /tmp/pgp.base64 does not exist
     if [ ! -f /tmp/pgp.base64 ]; then
-        hcp vault-secrets secrets open --quiet  --app=dotfiles "${HCP_PGP_KEY_NAME}" -o /tmp/pgp.base64
+        $HCP_BINARY vault-secrets secrets open --quiet  --app=dotfiles "${HCP_PGP_KEY_NAME}" -o /tmp/pgp.base64
     fi
     base64 -d /tmp/pgp.base64 | gpg --import
     rm -f /tmp/pgp.base64
