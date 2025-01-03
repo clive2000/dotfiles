@@ -8,6 +8,8 @@ HCP_PROJECT_ID='c75e9eb8-3b46-4efd-8ecf-b99d56e10c20'
 HCP_VAULT_APP='dotfiles'
 HCP_PGP_KEY_NAME='PGP_K_BASE64'
 
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
 download_hcp() {
     if [ ! -f "$HOME/.local/bin/hcp" ]; then
         echo "Downloading hcp"
@@ -92,5 +94,11 @@ auth_hcp
 extract_pgp
 
 # Ansible install
-cd /home/$USER/.config/ansible_playbooks
+pushd /home/$USER/.config/ansible_playbooks
 ansible-playbook -v -i inventory.ini playbook.yml --become --ask-become-pass -e "ansible_user_name=$USER"
+popd
+
+# Call into post_install.sh
+pushd /home/$USER/.config/ansible_playbooks
+"$SCRIPT_DIR/post_install.sh"
+popd
