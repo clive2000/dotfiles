@@ -90,3 +90,7 @@ install_dependencies
 download_hcp
 auth_hcp
 extract_pgp
+
+# Ansible install
+cd /home/$USER/.config/ansible_playbooks
+ansible-playbook -v -i inventory.ini playbook.yml --become --ask-become-pass -e "ansible_user_name=$USER"

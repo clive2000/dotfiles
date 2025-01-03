@@ -26,16 +26,16 @@ detect_arch() {
 
 install_dependencies_ubuntu() {
     sudo apt-get update
-    sudo apt-get install -y yadm git ansible
+    sudo apt-get install -y yadm git ansible curl
 }
 
 install_dependencies_opensuse() {
     sudo zypper refresh
-    sudo zypper install -y yadm git ansible
+    sudo zypper install -y yadm git ansible curl
 }
 
 install_dependencies_arch() {
-    sudo pacman -Syu --noconfirm yadm git ansible
+    sudo pacman -Syu --noconfirm yadm git ansible curl
 }
 
 install_dependencies_darwin() {
