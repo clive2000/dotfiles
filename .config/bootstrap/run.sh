@@ -72,7 +72,7 @@ if [ "$OS" == "linux" ]; then
             echo "Ubuntu detected, installing dependencies for ubuntu"
             IS_UBUNTU=1
             install_dependencies_ubuntu
-        elif [[ $ID == "opensuse" ]]; then
+        elif [[ $ID == "opensuse"* ]]; then
             echo "openSUSE detected, installing dependencies for opensuse"
             IS_OPENSUSE=1
             install_dependencies_opensuse
