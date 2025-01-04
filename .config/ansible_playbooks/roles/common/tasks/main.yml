@@ -1,6 +1,7 @@
 ---
 - name: Install common packages across all os
   become: true
+  when: ansible_os_family == "Linux"
   ansible.builtin.package:
     name: "{{ common_packages }}"
     state: present

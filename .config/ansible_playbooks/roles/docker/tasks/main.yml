@@ -1,13 +1,15 @@
 - name: Add docker group
+  when: ansible_os_family == "Linux"
   group:
     name: docker
     state: present
 
 - name: Add the current user to 'mygroup'
+  when: ansible_os_family == "Linux"
   user:
     name: "{{ original_user }}" # Get the user from the command line variable
     groups: docker
     append: yes
 
-- name: Perform ubuntu install for specifc machine
+- name: Perform linux install for specifc machine
   include_tasks: "{{ansible_distribution|lower|replace(' ', '_')}}.yml"

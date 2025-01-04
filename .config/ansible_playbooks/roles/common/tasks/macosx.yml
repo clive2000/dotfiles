@@ -1,0 +1,5 @@
+- name: Install common packages across all os
+  become: false
+  ansible.builtin.package:
+    name: "{{ common_packages }}"
+    state: present
