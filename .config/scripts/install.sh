@@ -1,1 +1,1 @@
-install.sh##os.Linux
+install.sh##os.Darwin

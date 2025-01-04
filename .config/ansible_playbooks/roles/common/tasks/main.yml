@@ -81,7 +81,7 @@
 - name: Enable Oh My Zsh plugins
   become: false
   lineinfile:
-    path: "/home/{{ original_user }}/.zshrc"
+    path: "~/.zshrc"
     regexp: '^plugins=\(.*\)$'
     line: "plugins=({{ oh_my_zsh_plugins | join(' ') }})"
     state: present
@@ -90,7 +90,7 @@
 # Add ~/.local/bin to path:
 - name: Export ~/.local/bin to path
   blockinfile:
-    path: "/home/{{ original_user }}/.zshrc"
+    path: "~/.zshrc"
     block: |
       export PATH="$HOME/.local/bin:$PATH"
     marker: "# {mark} ANSIBLE MANAGED BLOCK - Add ~/.local/bin to PATH"
@@ -101,7 +101,7 @@
 # p10k
 - name: Add text block to top of .zshrc
   blockinfile:
-    path: "/home/{{ original_user }}/.zshrc"
+    path: "~/.zshrc"
     block: |
       # === START MY CUSTOM BLOCK ===
       # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
@@ -118,7 +118,7 @@
 
 - name: Add Powerlevel10k config to end of .zshrc
   blockinfile:
-    path: "/home/{{ original_user }}/.zshrc"
+    path: "~/.zshrc"
     block: |
       # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
       [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
@@ -129,7 +129,7 @@
 
 - name: Set ZSH_THEME to powerlevel10k
   lineinfile:
-    path: "/home/{{ original_user }}/.zshrc"
+    path: "~/.zshrc"
     regexp: "^ZSH_THEME="
     line: 'ZSH_THEME="powerlevel10k/powerlevel10k"'
     state: present
@@ -139,5 +139,5 @@
   become: false
   ansible.builtin.git:
     repo: https://github.com/romkatv/powerlevel10k.git
-    dest: /home/{{ original_user }}/.oh-my-zsh/custom/themes/powerlevel10k
+    dest: ~/.oh-my-zsh/custom/themes/powerlevel10k
     depth: 1

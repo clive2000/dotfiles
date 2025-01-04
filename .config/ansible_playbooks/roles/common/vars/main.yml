@@ -24,6 +24,7 @@ common_packages_macosx:
   - git
   - wget
   - make
+  - gnupg
 
 oh_my_zsh_plugins:
   - git

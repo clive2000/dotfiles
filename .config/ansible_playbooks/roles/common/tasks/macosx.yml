@@ -1,4 +1,4 @@
-- name: Install common packages across all os
+- name: Install common packages on MacOSX
   become: false
   ansible.builtin.package:
     name: "{{ common_packages }}"
