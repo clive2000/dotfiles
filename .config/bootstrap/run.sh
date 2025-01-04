@@ -53,7 +53,8 @@ install_dependencies_darwin() {
     # Install homebrew
     if ! command -v brew >/dev/null 2>&1; then
         echo "Installing Homebrew"
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+        sudo echo 'Getting sudo session...'
+        NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
         echo 'eval $(/opt/homebrew/bin/brew shellenv)' >> /Users/$USER/.zprofile
         eval $(/opt/homebrew/bin/brew shellenv)
     fi
