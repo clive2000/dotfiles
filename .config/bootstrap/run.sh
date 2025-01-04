@@ -39,6 +39,7 @@ install_dependencies_arch() {
 }
 
 install_dependencies_darwin() {
+    set +e
     xcode-select -p &> /dev/null
     if [ $? -ne 0 ]; then
         echo "Command Line Tools for Xcode not found. Installing from softwareupdate…"
@@ -59,6 +60,7 @@ install_dependencies_darwin() {
 
     # Install yadm and ansible
     brew install yadm ansible
+    set -e
 }
 
 detect_arch
