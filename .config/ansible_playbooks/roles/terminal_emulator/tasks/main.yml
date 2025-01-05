@@ -5,10 +5,14 @@
 
 
 
-- name: Perform Kitty install when the arch is amd64
+- name: Perform Kitty install when the arch is amd64 Linux
   include_tasks: "kitty.yml"
-  when: ansible_architecture == "x86_64"
+  when: ansible_architecture == "x86_64" and ansible_os_family == "Linux"
 
-- name: Perform wezterm install when the arch is arm64(aarch64)
+- name: Perform wezterm install when the arch is arm64(aarch64) Linux
   include_tasks: "wezterm.yml"
-  when: ansible_architecture == "aarch64"
+  when: ansible_architecture == "aarch64" and ansible_os_family == "Linux"
+
+- name: Perform Ghostty install when the arch is arm64(aarch64) MacOSX
+  include_tasks: "ghostty.yml"
+  when: ansible_architecture == "arm64" and ansible_os_family == "Darwin"

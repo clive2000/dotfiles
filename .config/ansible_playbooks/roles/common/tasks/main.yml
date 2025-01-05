@@ -12,7 +12,7 @@
 - name: Check if oh my zsh is already installed
   become: false
   ansible.builtin.stat:
-    path: ~/.oh-my-zsh
+    path: "{{ home_dir }}/.oh-my-zsh"
   register: omz_directory_check
 
 - name: Set a variable based on directory's existence
@@ -23,22 +23,22 @@
   become: false
   ansible.builtin.git:
     repo: https://github.com/ohmyzsh/ohmyzsh.git
-    dest: ~/.oh-my-zsh
+    dest: "{{ home_dir }}/.oh-my-zsh"
     depth: 1
   when: not omz_directory_exists
 
 - name: Check if ~/.zshrc exists
   become: false
   stat:
-    path: "~/.zshrc"
+    path: "{{ home_dir }}/.zshrc"
   register: zshrc_check
 
 - name: Backup ~/.zshrc if it exists
   become: false
   copy:
     remote_src: yes # This is important when working on the target machine
-    src: "~/.zshrc"
-    dest: "~/.zshrc.orig"
+    src: "{{ home_dir }}/.zshrc"
+    dest: "{{ home_dir }}/.zshrc.orig"
   when: zshrc_check.stat.exists and not omz_directory_exists
   ignore_errors: true
 
@@ -47,29 +47,29 @@
   copy:
     force: true
     remote_src: yes # This is important when working on the target machine
-    src: "~/.oh-my-zsh/templates/zshrc.zsh-template"
-    dest: "~/.zshrc"
+    src: "{{ home_dir }}/.oh-my-zsh/templates/zshrc.zsh-template"
+    dest: "{{ home_dir }}/.zshrc"
   when: not omz_directory_exists
 
 - name: Install zsh-autosuggestions plugin # noqa: latest
   become: false
   ansible.builtin.git:
     repo: https://github.com/zsh-users/zsh-autosuggestions
-    dest: ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+    dest: "{{ home_dir }}/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
     depth: 1
 
 - name: Install zsh-syntax-highlighting plugin # noqa: latest
   become: false
   ansible.builtin.git:
     repo: https://github.com/zsh-users/zsh-syntax-highlighting.git
-    dest: ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
+    dest: "{{ home_dir }}/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
     depth: 1
 
 - name: Install you-should-use plugin # noqa: latest
   become: false
   ansible.builtin.git:
     repo: https://github.com/MichaelAquilina/zsh-you-should-use.git
-    dest: ~/.oh-my-zsh/custom/plugins/you-should-use
+    dest: "{{ home_dir }}/.oh-my-zsh/custom/plugins/you-should-use"
     depth: 1
 
 - name: Change shell to zsh
@@ -81,7 +81,7 @@
 - name: Enable Oh My Zsh plugins
   become: false
   lineinfile:
-    path: "~/.zshrc"
+    path: "{{ home_dir }}/.zshrc"
     regexp: '^plugins=\(.*\)$'
     line: "plugins=({{ oh_my_zsh_plugins | join(' ') }})"
     state: present
@@ -90,7 +90,7 @@
 # Add ~/.local/bin to path:
 - name: Export ~/.local/bin to path
   blockinfile:
-    path: "~/.zshrc"
+    path: "{{ home_dir }}/.zshrc"
     block: |
       export PATH="$HOME/.local/bin:$PATH"
     marker: "# {mark} ANSIBLE MANAGED BLOCK - Add ~/.local/bin to PATH"
@@ -101,7 +101,7 @@
 # p10k
 - name: Add text block to top of .zshrc
   blockinfile:
-    path: "~/.zshrc"
+    path: "{{ home_dir }}/.zshrc"
     block: |
       # === START MY CUSTOM BLOCK ===
       # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
@@ -118,7 +118,7 @@
 
 - name: Add Powerlevel10k config to end of .zshrc
   blockinfile:
-    path: "~/.zshrc"
+    path: "{{ home_dir }}/.zshrc"
     block: |
       # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
       [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
@@ -129,7 +129,7 @@
 
 - name: Set ZSH_THEME to powerlevel10k
   lineinfile:
-    path: "~/.zshrc"
+    path: "{{ home_dir }}/.zshrc"
     regexp: "^ZSH_THEME="
     line: 'ZSH_THEME="powerlevel10k/powerlevel10k"'
     state: present
@@ -139,5 +139,5 @@
   become: false
   ansible.builtin.git:
     repo: https://github.com/romkatv/powerlevel10k.git
-    dest: ~/.oh-my-zsh/custom/themes/powerlevel10k
+    dest: "{{ home_dir }}/.oh-my-zsh/custom/themes/powerlevel10k"
     depth: 1

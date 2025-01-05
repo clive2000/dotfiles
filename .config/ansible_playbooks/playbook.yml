@@ -25,18 +25,25 @@
       yum:
         update_cache: yes
       when: ansible_os_family == "RedHat"
-    # - name: Update zypper cache
-    #   zypper:
-    #     name: "*"
-    #     state: present
-    #     update_cache: yes
-    #   when: ansible_os_family == "Suse"
+    - name: Update Brew cache
+      become: false
+      community.general.homebrew:
+        update_homebrew: yes
+      when: ansible_os_family == "Darwin"
     - name: Check for virtualization facts
       debug:
         msg: |
           Virtualization role: {{ ansible_virtualization_role }}
           Virtualization type: {{ ansible_virtualization_type }}
       when: ansible_virtualization_role is defined or ansible_virtualization_type is defined
+    - name: Register regular user's home directory
+      set_fact:
+        home_dir: "/home/{{ original_user }}"
+      when: ansible_os_family == "Linux"
+    - name: Register regular user's home directory for MacOS
+      set_fact:
+        home_dir: "/Users/{{ original_user }}"
+      when: ansible_os_family == "Darwin"
 
   tasks:
     - name: showmsg
@@ -48,3 +55,4 @@
         - "{{ansible_env.HOME}}"
         - "{{ansible_user_dir }}"
         - "{{original_user}}"
+

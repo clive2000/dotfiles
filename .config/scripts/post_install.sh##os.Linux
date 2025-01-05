@@ -7,6 +7,8 @@ PRIVATE_REPO_NAME="clive2000/secrets"
 HCP_ORGANIZATION_ID='a18324e7-79ce-4a06-8a29-c7febc505769'
 HCP_PROJECT_ID='c75e9eb8-3b46-4efd-8ecf-b99d56e10c20'
 HCP_GH_CLI_KEY_NAME='GH_PERSONAL_TOKEN'
+GIT_USER="Xiaowei Huang"
+GIT_EMAIL="hi@xiaowei.dev"
 
 # Authenticate with HCP and get GH_TOKEN
 auth_hcp() {
@@ -30,7 +32,13 @@ auth_gh_cli() {
     rm -rf /tmp/gh_token
 }
 
+configure_git() {
+    git config --global user.name "${GIT_USER}"
+    git config --global user.email "${GIT_EMAIL}"
+}
+
 install_secrets() {
+    export GPG_TTY=$(tty)
     gh repo clone "${PRIVATE_REPO_NAME}" "/tmp/secrets"
     if [ $? -ne 0 ]; then
         echo "Failed to clone the private repository, please re-run the script again"
@@ -46,4 +54,5 @@ install_secrets() {
 
 auth_hcp
 auth_gh_cli
+configure_git
 install_secrets

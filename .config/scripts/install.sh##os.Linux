@@ -32,6 +32,9 @@ detect_arch() {
         aarch64)
             ARCH="arm64"
             ;;
+        arm64)
+            ARCH="arm64"
+            ;;
         *)
             echo "Unsupported architecture: $arch"
             exit 1

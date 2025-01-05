@@ -20,11 +20,19 @@ common_packages_suse:
   - bat
   - wireguard-tools
 
-common_packages_macosx:
+homebrew_packages_macosx:
   - git
   - wget
   - make
   - gnupg
+
+homebrew_casks_macosx:
+  - visual-studio-code
+  - cursor
+  - openinterminal-lite
+  - font-cascadia-code
+  - font-caskaydia-mono-nerd-font
+  - font-hack-nerd-font
 
 oh_my_zsh_plugins:
   - git

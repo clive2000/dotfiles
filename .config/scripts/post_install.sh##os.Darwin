@@ -1,1 +1,54 @@
 #!/bin/bash
+
+set -e
+set -x
+
+PRIVATE_REPO_NAME="clive2000/secrets"
+HCP_ORGANIZATION_ID='a18324e7-79ce-4a06-8a29-c7febc505769'
+HCP_PROJECT_ID='c75e9eb8-3b46-4efd-8ecf-b99d56e10c20'
+HCP_GH_CLI_KEY_NAME='GH_PERSONAL_TOKEN'
+GIT_USER="Xiaowei Huang"
+GIT_EMAIL="hi@xiaowei.dev"
+# Authenticate with HCP and get GH_TOKEN
+auth_hcp() {
+    hcp auth login
+    if [ $? -ne 0 ]; then
+        echo "Failed to authenticate with HCP, please re-run the script again"
+        exit 1
+    fi
+    hcp profile set organization_id "${HCP_ORGANIZATION_ID}"
+    hcp profile set project_id "${HCP_PROJECT_ID}"
+}
+
+auth_gh_cli() {
+    hcp vault-secrets secrets open --quiet  --app=dotfiles "${HCP_GH_CLI_KEY_NAME}" -o /tmp/gh_token
+    gh auth login --with-token < /tmp/gh_token
+    gh auth setup-git
+    if [ $? -ne 0 ]; then
+        echo "Failed to authenticate with GH CLI, please re-run the script again"
+        exit 1
+    fi
+    rm -rf /tmp/gh_token
+}
+
+configure_git() {
+    git config --global user.name "${GIT_USER}"
+    git config --global user.email "${GIT_EMAIL}"
+}
+
+install_secrets() {
+    gh repo clone "${PRIVATE_REPO_NAME}" "/tmp/secrets"
+    if [ $? -ne 0 ]; then
+        echo "Failed to clone the private repository, please re-run the script again"
+        exit 1
+    fi
+    pushd /tmp/secrets
+    make nord
+    popd
+    rm -rf /tmp/secrets
+}
+
+auth_hcp
+auth_gh_cli
+configure_git
+install_secrets

@@ -1,16 +1,90 @@
 #!/bin/zsh
 
 set -e
+set -x
 
-echo "Installing for MacOS"
+HCP_VERSION="0.8.0"
+HCP_ORGANIZATION_ID='a18324e7-79ce-4a06-8a29-c7febc505769'
+HCP_PROJECT_ID='c75e9eb8-3b46-4efd-8ecf-b99d56e10c20'
+HCP_VAULT_APP='dotfiles'
+HCP_PGP_KEY_NAME='PGP_K_BASE64'
 
-# Homebrew
-if ! command -v brew >/dev/null 2>&1; then
-    echo "Installing Homebrew"
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-    echo 'eval $(/opt/homebrew/bin/brew shellenv)' >> /Users/$USER/.zprofile
-    eval $(/opt/homebrew/bin/brew shellenv)
-fi
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
+download_hcp() {
+    if [ ! -f "$HOME/.local/bin/hcp" ]; then
+        echo "Downloading hcp"
+        mkdir -p "$HOME/.local/bin"
+        curl -L https://releases.hashicorp.com/hcp/$HCP_VERSION/hcp_${HCP_VERSION}_darwin_${ARCH}.zip -o /tmp/hcp.zip
+        unzip /tmp/hcp.zip -d /tmp/hcp
+        install /tmp/hcp/hcp "$HOME/.local/bin"
+        rm -rf /tmp/hcp /tmp/hcp.zip
+    fi
+    HCP_BINARY="$HOME/.local/bin/hcp"
+}
+
+
+# Detect CPU architecture
+detect_arch() {
+    local arch=$(uname -m)
+    case $arch in
+        x86_64)
+            ARCH="amd64"
+            ;;
+        aarch64)
+            ARCH="arm64"
+            ;;
+        arm64)
+            ARCH="arm64"
+            ;;
+        *)
+            echo "Unsupported architecture: $arch"
+            exit 1
+            ;;
+    esac
+}
+
+auth_hcp() {
+    $HCP_BINARY auth login
+    if [ $? -ne 0 ]; then
+        echo "Failed to authenticate with HCP, please re-run the script again"
+        exit 1
+    fi
+    $HCP_BINARY profile set organization_id "${HCP_ORGANIZATION_ID}"
+    $HCP_BINARY profile set project_id "${HCP_PROJECT_ID}"
+}
+
+
+# Install required dependencies based on detected distribution
+install_dependencies() {
+    brew install ansible yadm gnupg
+}
+
+extract_pgp() {
+    # If /tmp/pgp.base64 does not exist
+    if [ ! -f /tmp/pgp.base64 ]; then
+        $HCP_BINARY vault-secrets secrets open --quiet  --app=dotfiles "${HCP_PGP_KEY_NAME}" -o /tmp/pgp.base64
+    fi
+    export GPG_TTY=$(tty)
+    base64 -d < /tmp/pgp.base64 | gpg --import
+    rm -f /tmp/pgp.base64
+}
+
+
+detect_arch
+install_dependencies
+download_hcp
+auth_hcp
+extract_pgp
+
+# Ansible install
+pushd /"${HOME}"/.config/ansible_playbooks
+ansible-playbook -v -i inventory.ini playbook.yml --become --ask-become-pass -e "ansible_user_name=$USER"
+popd
+
+# Call into post_install.sh
+bash "$SCRIPT_DIR/post_install.sh"
+
 
 # Install brewfiles
 if [ -d "$HOME/.config/brewfiles" ]; then
@@ -18,101 +92,22 @@ if [ -d "$HOME/.config/brewfiles" ]; then
     brew bundle install --file="$HOME/.config/brewfiles/coding/Brewfile"
 fi
 
-# Check if oh-my-zsh is installed
-if [ -d "$HOME/.oh-my-zsh" ]; then
-    echo "Oh My Zsh is already installed."
-else
-    echo "Installing Oh My Zsh..."
-    # Use the official oh-my-zsh installation command
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended    
-fi
 
-# Install terminall, if not vm, install kitty, otherwise install alacritty
-# Check if running in a VM
-if [ $(sysctl -n kern.hv_vmm_present) -eq 1 ]; then
-    echo "Running in VM, installing Alacritty..."
-    brew install --cask alacritty
-else
-    echo "Not in VM, installing Kitty..."
-    brew install --cask kitty
-fi
+# if command -v python3 > /dev/null 2>&1; then
+#     if [ -f "$HOME/.config/scripts/setup_zshrc.py" ]; then
+#         python3 "$HOME/.config/scripts/setup_zshrc.py"
+#     else
+#         echo "Not able to find setup_zshrc.py"
+#     fi
+# else
+#     echo "Not able to find python3"
+#     exit 1
+# fi
 
-
-# Set zsh-plugins and zsh theme
-if [ -f "$HOME/.zshrc" ]; then
-    NEW_THEME='powerlevel10k/powerlevel10k'
-    sed -i '' "s|^ZSH_THEME=.*|ZSH_THEME=\"$NEW_THEME\"|" "$HOME/.zshrc"
-    echo "ZSH theme updated to $NEW_THEME in ~/.zshrc."
-    sed -i '' 's|^plugins=.*|plugins=(git zsh-autosuggestions zsh-syntax-highlighting)|g' "$HOME/.zshrc"
-fi
-
-# Powerlevel 10k
-if [ -d ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k ]; then
-    echo "Powerlevel10k is already installed"
-else
-    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
-fi
-
-## zsh-autosuggestions
-if [ ! -d ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions ]; then
-    git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-fi
-
-## zsh-syntax-highlight
-if [ ! -d ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting ]; then
-    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-fi
-
-## Set p10k instant prompt
-BLOCK='# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi'
-
-echo "BLOCK IS ${BLOCK}"
-
-# Path to the .zshrc file
-ZSHRC_FILE="$HOME/.zshrc"
-
-# Check if the block already exists at the start of the file
-if ! grep -Fxq "$BLOCK" "$ZSHRC_FILE"; then
-  # Prepend the block to the file
-  {
-    echo "$BLOCK"
-    cat "$ZSHRC_FILE"
-  } > "${ZSHRC_FILE}.tmp" && mv "${ZSHRC_FILE}.tmp" "$ZSHRC_FILE"
-fi
-
-## Set p10k source
-P10KBLOCK='# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh'
-
-grep -Fxq "$P10KBLOCK" "$ZSHRC_FILE" || echo "$P10KBLOCK" >> "$ZSHRC_FILE"
-
-if [ -f "$HOME/.zshrc" ]; then
-    NEW_THEME='powerlevel10k/powerlevel10k'
-    sed -i '' "s|^ZSH_THEME=.*|ZSH_THEME=\"$NEW_THEME\"|" "$HOME/.zshrc"
-    echo "ZSH theme updated to $NEW_THEME in ~/.zshrc."
-    sed -i '' 's|^plugins=.*|plugins=(git zsh-autosuggestions zsh-syntax-highlighting)|g' "$HOME/.zshrc"
-fi
-
-if command -v python3 > /dev/null 2>&1; then
-    if [ -f "$HOME/.config/scripts/setup_zshrc.py" ]; then
-        python3 "$HOME/.config/scripts/setup_zshrc.py"
-    else
-        echo "Not able to find setup_zshrc.py"
-    fi
-else
-    echo "Not able to find python3"
-    exit 1
-fi
-
-# Go to mac_wizard.zsh
-if [ -f "$HOME/.config/scripts/mac_wizard.zsh" ]; then
-    zsh "$HOME/.config/scripts/mac_wizard.zsh"
-else
-    echo "Not able to find mac_wizard.zsh"
-    exit 1
-fi
+# # Go to mac_wizard.zsh
+# if [ -f "$HOME/.config/scripts/mac_wizard.zsh" ]; then
+#     zsh "$HOME/.config/scripts/mac_wizard.zsh"
+# else
+#     echo "Not able to find mac_wizard.zsh"
+#     exit 1
+# fi

@@ -1,15 +1,5 @@
 # Coding
-brew "git"
-brew "gh"
-brew "colima"
-brew "fnm"
-brew "pgcli"
-brew "pyenv"
-brew "lazygit"
 cask "temurin@17"
-
-# Docker
-brew "colima"
 
 # Dependencies for pyenv
 brew "openssl"
