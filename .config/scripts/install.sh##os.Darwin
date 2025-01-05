@@ -77,6 +77,14 @@ download_hcp
 auth_hcp
 extract_pgp
 
+# Install brewfiles
+echo "Installing brewfiles"
+if [ -d "$HOME/.config/brewfiles" ]; then
+    brew bundle install --file="$HOME/.config/brewfiles/minimal/Brewfile"
+    brew bundle install --file="$HOME/.config/brewfiles/coding/Brewfile"
+fi
+
+
 # Ansible install
 pushd /"${HOME}"/.config/ansible_playbooks
 ansible-playbook -v -i inventory.ini playbook.yml --become --ask-become-pass -e "ansible_user_name=$USER"
@@ -84,14 +92,6 @@ popd
 
 # Call into post_install.sh
 bash "$SCRIPT_DIR/post_install.sh"
-
-
-# Install brewfiles
-if [ -d "$HOME/.config/brewfiles" ]; then
-    brew bundle install --file="$HOME/.config/brewfiles/minimal/Brewfile"
-    brew bundle install --file="$HOME/.config/brewfiles/coding/Brewfile"
-fi
-
 
 # if command -v python3 > /dev/null 2>&1; then
 #     if [ -f "$HOME/.config/scripts/setup_zshrc.py" ]; then
