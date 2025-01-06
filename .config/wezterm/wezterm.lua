@@ -14,12 +14,27 @@ end
 -- For example, changing the color scheme:
 config.color_scheme = 'ayu'
 config.enable_scroll_bar = true
-config.window_background_opacity = 1
+config.window_background_opacity = 0.95
 config.default_cursor_style = "SteadyBar"
 config.window_decorations = "TITLE | RESIZE"
 
 -- Do not enable wayland
 config.enable_wayland = false
 -- and finally, return the configuration to wezterm
+
+-- Font
+config.font = wezterm.font_with_fallback{
+  "CaskaydiaCove Nerd Font Mono",
+  "Cascadia Mono NF",
+  "Cascadia Mono",
+  "Cascadia Code",
+  "Hack Nerd Font Mono",
+  "Hack Nerd Font",
+  "Hack NF",
+  "Hack",
+  "JetBrains Mono",
+  "Source Code Pro",
+}
+config.font_size = 16
 
 return config
