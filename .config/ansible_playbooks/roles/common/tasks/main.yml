@@ -1,12 +1,12 @@
 ---
 - name: Install common packages across all os
   become: true
-  when: ansible_os_family == "Linux"
+  when: ansible_system == "Linux"
   ansible.builtin.package:
     name: "{{ common_packages }}"
     state: present
 
-- name: Perform packages for specific ansible_os_family
+- name: Perform packages for specific ansible_distribution
   include_tasks: "{{ansible_distribution|lower|replace(' ', '_')}}.yml"
 
 - name: Check if oh my zsh is already installed

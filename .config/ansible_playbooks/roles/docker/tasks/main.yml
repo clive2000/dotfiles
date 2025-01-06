@@ -1,11 +1,11 @@
 - name: Add docker group
-  when: ansible_os_family == "Linux"
+  when: ansible_system == "Linux"
   group:
     name: docker
     state: present
 
 - name: Add the current user to 'mygroup'
-  when: ansible_os_family == "Linux"
+  when: ansible_system == "Linux"
   user:
     name: "{{ original_user }}" # Get the user from the command line variable
     groups: docker
