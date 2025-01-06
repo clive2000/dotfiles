@@ -56,8 +56,7 @@ auth_hcp() {
 
 # Install required dependencies based on detected distribution
 install_dependencies() {
-    
-    brew install ansible yadm gnupg
+    brew install ansible gnupg
 }
 
 extract_pgp() {

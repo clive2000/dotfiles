@@ -61,7 +61,7 @@ install_dependencies_darwin() {
     fi
 
     # Install yadm and ansible
-    brew install yadm ansible gnupg
+    brew install yadm
     set -e
 }
 
