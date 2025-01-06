@@ -1,5 +1,5 @@
 ---
-- name: Install common packages across all os
+- name: Install common packages across all os (Linux)
   become: true
   when: ansible_system == "Linux"
   ansible.builtin.package:
