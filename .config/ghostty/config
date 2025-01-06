@@ -1,0 +1,15 @@
+theme = "ayu"
+
+# Font family
+font-family = "CaskaydiaMono Nerd Font Mono"
+font-family = "Hack Nerd Font Mono"
+font-family = "Cascadia Code"
+font-family = "Monaco"
+
+# Font size
+font-size = 16
+
+window-width = 100
+window-height = 32
+
+# window-save-state = always
