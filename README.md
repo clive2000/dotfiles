@@ -35,3 +35,7 @@ curl
 ```
 curl -sL https://raw.githubusercontent.com/clive2000/dotfiles/refs/heads/master/.config/bootstrap/run.sh | bash
 ```
+
+## Post-install
+
+On MacOS, please re-run `yadm bootstrap` after bootstrap process.

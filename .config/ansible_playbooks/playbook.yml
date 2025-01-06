@@ -39,11 +39,11 @@
     - name: Register regular user's home directory
       set_fact:
         home_dir: "/home/{{ original_user }}"
-      when: ansible_os_family == "Linux"
+      when: ansible_system == "Linux"
     - name: Register regular user's home directory for MacOS
       set_fact:
         home_dir: "/Users/{{ original_user }}"
-      when: ansible_os_family == "Darwin"
+      when: ansible_system == "Darwin"
 
   tasks:
     - name: showmsg
