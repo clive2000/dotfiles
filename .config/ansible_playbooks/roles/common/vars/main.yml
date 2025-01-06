@@ -15,6 +15,7 @@ common_packages_ubuntu:
   - apt-transport-https
   - wireguard-tools
   - bat
+  - build-essential
 
 common_packages_suse:
   - bat

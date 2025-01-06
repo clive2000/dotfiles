@@ -4,6 +4,12 @@
     state: present
     update_cache: yes
 
+- name: Install suse's build-essential(devel_basis)
+  community.general.zypper:
+    name: devel_basis
+    type: pattern
+    state: present
+
 - name: Install vm spcific packages
   community.general.zypper:
     name: open-vm-tools
