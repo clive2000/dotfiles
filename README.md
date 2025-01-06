@@ -30,10 +30,24 @@ wget
 wget -qO- https://raw.githubusercontent.com/clive2000/dotfiles/refs/heads/master/.config/bootstrap/run.sh | bash
 ```
 
+OR 
+
+```
+wget -q https://raw.githubusercontent.com/clive2000/dotfiles/refs/heads/master/.config/bootstrap/run.sh -O run.sh
+bash run.sh
+```
+
 curl
 
 ```
 curl -sL https://raw.githubusercontent.com/clive2000/dotfiles/refs/heads/master/.config/bootstrap/run.sh | bash
+```
+
+OR
+
+```
+curl -sLO https://raw.githubusercontent.com/clive2000/dotfiles/refs/heads/master/.config/bootstrap/run.sh
+bash run.sh
 ```
 
 ## Post-install
