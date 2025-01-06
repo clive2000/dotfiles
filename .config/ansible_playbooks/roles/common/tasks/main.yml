@@ -98,6 +98,34 @@
     create: false
   become: false
 
+# vimrc
+- name: Install vimrc # noqa: latest
+  become: false
+  ansible.builtin.git:
+    repo: https://github.com/amix/vimrc.git
+    dest: "{{ home_dir }}/.vim_runtime"
+    depth: 1
+
+# Enable vimrc in .vimrc :
+- name: Enable vimrc in .vimrc
+  blockinfile:
+    path: "{{ home_dir }}/.vimrc"
+    block: |
+      set runtimepath+=~/.vim_runtime
+
+      source ~/.vim_runtime/vimrcs/basic.vim
+      source ~/.vim_runtime/vimrcs/filetypes.vim
+      source ~/.vim_runtime/vimrcs/plugins_config.vim
+      source ~/.vim_runtime/vimrcs/extended.vim
+      try
+        source ~/.vim_runtime/my_configs.vim
+      catch
+      endtry
+    marker: "\" {mark} ANSIBLE MANAGED BLOCK - vimrc"
+    insertafter: EOF
+    create: true
+  become: false
+
 # p10k
 - name: Add text block to top of .zshrc
   blockinfile:

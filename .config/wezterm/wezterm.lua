@@ -14,7 +14,6 @@ end
 -- For example, changing the color scheme:
 config.color_scheme = 'ayu'
 config.enable_scroll_bar = true
-config.window_background_opacity = 0.95
 config.default_cursor_style = "SteadyBar"
 config.window_decorations = "TITLE | RESIZE"
 
