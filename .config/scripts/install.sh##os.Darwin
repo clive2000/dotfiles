@@ -23,7 +23,6 @@ download_hcp() {
     HCP_BINARY="$HOME/.local/bin/hcp"
 }
 
-
 # Detect CPU architecture
 detect_arch() {
     local arch=$(uname -m)
@@ -57,6 +56,7 @@ auth_hcp() {
 
 # Install required dependencies based on detected distribution
 install_dependencies() {
+    
     brew install ansible yadm gnupg
 }
 
@@ -70,6 +70,8 @@ extract_pgp() {
     rm -f /tmp/pgp.base64
 }
 
+# Source homebrew env
+eval $(/opt/homebrew/bin/brew shellenv)
 
 detect_arch
 install_dependencies

@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+set -x
 
 detect_arch() {
     local arch=$(uname -m)
@@ -97,5 +98,7 @@ if [ "$OS" == "darwin" ]; then
     install_dependencies_darwin
 fi
 
-yadm clone https://github.com/clive2000/dotfiles.git --no-bootstrap
+# brew env first and then yadm clone the repo
+eval $(/opt/homebrew/bin/brew shellenv)
+yadm clone --verbose https://github.com/clive2000/dotfiles.git --no-bootstrap
 yadm bootstrap
