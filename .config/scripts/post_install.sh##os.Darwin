@@ -9,6 +9,8 @@ HCP_PROJECT_ID='c75e9eb8-3b46-4efd-8ecf-b99d56e10c20'
 HCP_GH_CLI_KEY_NAME='GH_PERSONAL_TOKEN'
 GIT_USER="Xiaowei Huang"
 GIT_EMAIL="hi@xiaowei.dev"
+HCP_PGP_KEY_NAME='PGP_K_BASE64'
+
 # Authenticate with HCP and get GH_TOKEN
 auth_hcp() {
     hcp auth login
@@ -36,6 +38,17 @@ configure_git() {
     git config --global user.email "${GIT_EMAIL}"
 }
 
+extract_pgp() {
+    # If /tmp/pgp.base64 does not exist
+    if [ ! -f /tmp/pgp.base64 ]; then
+        hcp vault-secrets secrets open --quiet  --app=dotfiles "${HCP_PGP_KEY_NAME}" -o /tmp/pgp.base64
+    fi
+    export GPG_TTY=$(tty)
+    base64 -d < /tmp/pgp.base64 | gpg --import
+    rm -f /tmp/pgp.base64
+}
+
+
 install_secrets() {
     gh repo clone "${PRIVATE_REPO_NAME}" "/tmp/secrets"
     if [ $? -ne 0 ]; then
@@ -49,6 +62,7 @@ install_secrets() {
 }
 
 auth_hcp
+extract_pgp
 auth_gh_cli
 configure_git
 install_secrets
