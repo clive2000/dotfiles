@@ -2,25 +2,7 @@
 
 set -e
 
-HCP_VERSION="0.8.0"
-HCP_ORGANIZATION_ID='a18324e7-79ce-4a06-8a29-c7febc505769'
-HCP_PROJECT_ID='c75e9eb8-3b46-4efd-8ecf-b99d56e10c20'
-HCP_VAULT_APP='dotfiles'
-HCP_PGP_KEY_NAME='PGP_K_BASE64'
-
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-
-download_hcp() {
-    if [ ! -f "$HOME/.local/bin/hcp" ]; then
-        echo "Downloading hcp"
-        mkdir -p "$HOME/.local/bin"
-        curl -L https://releases.hashicorp.com/hcp/$HCP_VERSION/hcp_${HCP_VERSION}_linux_${ARCH}.zip -o /tmp/hcp.zip
-        unzip /tmp/hcp.zip -d /tmp/hcp
-        install /tmp/hcp/hcp "$HOME/.local/bin"
-        rm -rf /tmp/hcp /tmp/hcp.zip
-    fi
-    HCP_BINARY="$HOME/.local/bin/hcp"
-}
 
 # Detect CPU architecture
 detect_arch() {
@@ -58,16 +40,6 @@ else
     exit 1
 fi
 
-auth_hcp() {
-    $HCP_BINARY auth login
-    if [ $? -ne 0 ]; then
-        echo "Failed to authenticate with HCP, please re-run the script again"
-        exit 1
-    fi
-    $HCP_BINARY profile set organization_id "${HCP_ORGANIZATION_ID}"
-    $HCP_BINARY profile set project_id "${HCP_PROJECT_ID}"
-}
-
 # Install required dependencies based on detected distribution
 install_dependencies() {
     if [[ $IS_UBUNTU == 1 ]]; then
@@ -81,20 +53,8 @@ install_dependencies() {
     fi
 }
 
-extract_pgp() {
-    # If /tmp/pgp.base64 does not exist
-    if [ ! -f /tmp/pgp.base64 ]; then
-        $HCP_BINARY vault-secrets secrets open --quiet  --app=dotfiles "${HCP_PGP_KEY_NAME}" -o /tmp/pgp.base64
-    fi
-    base64 -d /tmp/pgp.base64 | gpg --import
-    rm -f /tmp/pgp.base64
-}
-
 detect_arch
 install_dependencies
-download_hcp
-auth_hcp
-extract_pgp
 
 # Ansible install
 pushd /home/$USER/.config/ansible_playbooks

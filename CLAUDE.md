@@ -41,7 +41,7 @@ ansible-playbook --syntax-check ~/.config/ansible_playbooks/playbook.yml
             → .config/scripts/install.sh##os.<OS>
                 → runs ansible-playbook
                 → .config/scripts/post_install.sh##os.<OS>
-                    → HCP vault auth, GitHub CLI setup, git config
+                    → git config setup
 ```
 
 ### OS-Specific Files
@@ -53,18 +53,12 @@ Files with `##os.Darwin` or `##os.Linux` suffixes are yadm alternates—yadm aut
 | `common` | Base packages, Oh My Zsh, Powerlevel10k, vim |
 | `docker` | Docker installation |
 | `github_cli` | GitHub CLI with GPG signing |
-| `hcp` | HashiCorp Cloud Platform CLI |
 | `terminal_emulator` | Ghostty (macOS) or Wezterm (Linux) |
 | `terminal_tools` | Modern CLI utilities via Homebrew |
 | `vscode` | VS Code and Cursor editors |
 
 ### Brewfiles (in `.config/brewfiles/`)
 Modular Homebrew bundles: `minimal/`, `coding/`, `cloud/`, `entertainment/`
-
-### Secrets Management
-Uses HashiCorp Cloud Platform (HCP) Vault for:
-- `GH_PERSONAL_TOKEN` - GitHub authentication
-- `PGP_K_BASE64` - GPG key for git signing
 
 ## Configuration Files
 
