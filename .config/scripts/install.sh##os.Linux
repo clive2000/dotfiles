@@ -34,6 +34,9 @@ if [ -f /etc/os-release ]; then
     elif [[ $ID == "opensuse"* ]]; then
         echo "openSUSE detected, installing dependencies for opensuse"
         IS_OPENSUSE=1
+    elif [[ $ID == "arch" ]]; then
+        echo "Arch Linux detected, installing dependencies for arch"
+        IS_ARCH=1
     fi
 else
     echo "Could not detect Linux distribution"
@@ -47,6 +50,8 @@ install_dependencies() {
         sudo apt install -y ansible yadm git gpg
     elif [[ $IS_OPENSUSE == 1 ]]; then
         sudo zypper install -y ansible yadm git gpg
+    elif [[ $IS_ARCH == 1 ]]; then
+        sudo pacman -Syu --noconfirm ansible yadm git gnupg
     else
         echo "Unsupported Linux distribution for automated dependency installation"
         exit 1
