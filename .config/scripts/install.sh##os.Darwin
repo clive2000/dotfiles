@@ -54,21 +54,3 @@ popd
 # Call into post_install.sh
 bash "$SCRIPT_DIR/post_install.sh"
 
-# if command -v python3 > /dev/null 2>&1; then
-#     if [ -f "$HOME/.config/scripts/setup_zshrc.py" ]; then
-#         python3 "$HOME/.config/scripts/setup_zshrc.py"
-#     else
-#         echo "Not able to find setup_zshrc.py"
-#     fi
-# else
-#     echo "Not able to find python3"
-#     exit 1
-# fi
-
-# # Go to mac_wizard.zsh
-# if [ -f "$HOME/.config/scripts/mac_wizard.zsh" ]; then
-#     zsh "$HOME/.config/scripts/mac_wizard.zsh"
-# else
-#     echo "Not able to find mac_wizard.zsh"
-#     exit 1
-# fi
