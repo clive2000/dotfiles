@@ -1,5 +1,5 @@
-- name: Install Ghostty Homebrew Cask
-  when: ansible_facts['system'] == "Darwin"
+---
+- name: Install Ghostty on macOS
   become: false
   community.general.homebrew_cask:
     name: ghostty

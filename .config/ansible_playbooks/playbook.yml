@@ -15,43 +15,43 @@
     - name: Capture the original user
       set_fact:
         original_user: "{{ ansible_user_name }}"
-      run_once: true # Only need to do this once
+      run_once: true
     - name: Update apt cache
       apt:
         update_cache: yes
-      when: ansible_os_family == "Debian"
+      when: ansible_facts['os_family'] == "Debian"
     - name: Update yum cache
       yum:
         update_cache: yes
-      when: ansible_os_family == "RedHat"
+      when: ansible_facts['os_family'] == "RedHat"
     - name: Update Brew cache
       become: false
       community.general.homebrew:
         update_homebrew: yes
-      when: ansible_os_family == "Darwin"
+      when: ansible_facts['os_family'] == "Darwin"
     - name: Check for virtualization facts
       debug:
         msg: |
-          Virtualization role: {{ ansible_virtualization_role }}
-          Virtualization type: {{ ansible_virtualization_type }}
-      when: ansible_virtualization_role is defined or ansible_virtualization_type is defined
+          Virtualization role: {{ ansible_facts['virtualization_role'] }}
+          Virtualization type: {{ ansible_facts['virtualization_type'] }}
+      when: ansible_facts['virtualization_role'] is defined or ansible_facts['virtualization_type'] is defined
     - name: Register regular user's home directory
       set_fact:
         home_dir: "/home/{{ original_user }}"
-      when: ansible_system == "Linux"
+      when: ansible_facts['system'] == "Linux"
     - name: Register regular user's home directory for MacOS
       set_fact:
         home_dir: "/Users/{{ original_user }}"
-      when: ansible_system == "Darwin"
+      when: ansible_facts['system'] == "Darwin"
 
   tasks:
     - name: showmsg
       debug:
         msg: "{{item}}\n"
       with_items:
-        - "{{ansible_distribution}}"
-        - "{{ansible_user_id }}"
-        - "{{ansible_env.HOME}}"
-        - "{{ansible_user_dir }}"
-        - "{{original_user}}"
+        - "{{ ansible_facts['distribution'] }}"
+        - "{{ ansible_facts['user_id'] }}"
+        - "{{ ansible_facts['env']['HOME'] }}"
+        - "{{ ansible_facts['user_dir'] }}"
+        - "{{ original_user }}"
 

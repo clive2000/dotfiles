@@ -21,6 +21,11 @@ common_packages_suse:
   - bat
   - wireguard-tools
 
+common_packages_arch:
+  - base-devel
+  - bat
+  - wireguard-tools
+
 homebrew_packages_macosx:
   - git
   - wget

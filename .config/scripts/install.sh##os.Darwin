@@ -5,17 +5,13 @@ set -x
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
-# Detect CPU architecture
 detect_arch() {
     local arch=$(uname -m)
     case $arch in
         x86_64)
             ARCH="amd64"
             ;;
-        aarch64)
-            ARCH="arm64"
-            ;;
-        arm64)
+        aarch64|arm64)
             ARCH="arm64"
             ;;
         *)
@@ -25,32 +21,23 @@ detect_arch() {
     esac
 }
 
-
-# Install required dependencies based on detected distribution
 install_dependencies() {
     brew install ansible
 }
 
+install_ansible_collections() {
+    ansible-galaxy collection install community.general --force
+}
 
-# Source homebrew env
-eval $(/opt/homebrew/bin/brew shellenv)
+eval "$(/opt/homebrew/bin/brew shellenv)"
 
 detect_arch
 install_dependencies
+install_ansible_collections
 
-# # Install brewfiles
-# echo "Installing brewfiles"
-# if [ -d "$HOME/.config/brewfiles" ]; then
-#     brew bundle install --file="$HOME/.config/brewfiles/minimal/Brewfile"
-#     brew bundle install --file="$HOME/.config/brewfiles/coding/Brewfile"
-# fi
-
-
-# Ansible install
-pushd /"${HOME}"/.config/ansible_playbooks
+pushd "$HOME/.config/ansible_playbooks"
 ansible-playbook -v -i inventory.ini playbook.yml --become --ask-become-pass -e "ansible_user_name=$USER"
 popd
 
-# Call into post_install.sh
-bash "$SCRIPT_DIR/post_install.sh"
+"$SCRIPT_DIR/post_install.sh"
 

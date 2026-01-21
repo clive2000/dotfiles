@@ -1,5 +1,5 @@
 - name: Install Wezterm on Ubuntu ARM64
-  when: ansible_distribution|lower|replace(' ', '_') == "ubuntu"
+  when: ansible_facts['distribution'] | lower | replace(' ', '_') == "ubuntu"
   block:
     - name: Check if wezterm is installed
       ansible.builtin.command: which wezterm
@@ -54,7 +54,7 @@
     
 
 - name: Install Wezterm on Opensuse ARM64
-  when: ansible_distribution|lower|replace(' ', '_') == "opensuse_tumbleweed"
+  when: ansible_facts['distribution'] | lower | replace(' ', '_') == "opensuse_tumbleweed"
   block:
     - name: Install wezterm using zypper
       community.general.zypper:
