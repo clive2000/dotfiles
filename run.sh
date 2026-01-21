@@ -46,7 +46,7 @@ install_xcode_cli_tools() {
 install_homebrew() {
     if ! command -v brew >/dev/null 2>&1; then
         echo "Installing Homebrew..."
-        NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
         echo 'eval $(/opt/homebrew/bin/brew shellenv)' >> "/Users/$USER/.zprofile"
         eval "$(/opt/homebrew/bin/brew shellenv)"
     else
