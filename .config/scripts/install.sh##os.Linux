@@ -4,17 +4,13 @@ set -e
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
-# Detect CPU architecture
 detect_arch() {
     local arch=$(uname -m)
     case $arch in
         x86_64)
             ARCH="amd64"
             ;;
-        aarch64)
-            ARCH="arm64"
-            ;;
-        arm64)
+        aarch64|arm64)
             ARCH="arm64"
             ;;
         *)
@@ -24,26 +20,29 @@ detect_arch() {
     esac
 }
 
-# Detect Linux distribution
-if [ -f /etc/os-release ]; then
-    . /etc/os-release
-    DISTRO=$NAME
-    if [[ $ID == "ubuntu" ]]; then
-        echo "Ubuntu detected, installing dependencies for ubuntu"
-        IS_UBUNTU=1
-    elif [[ $ID == "opensuse"* ]]; then
-        echo "openSUSE detected, installing dependencies for opensuse"
-        IS_OPENSUSE=1
-    elif [[ $ID == "arch" ]]; then
-        echo "Arch Linux detected, installing dependencies for arch"
-        IS_ARCH=1
+detect_distro() {
+    if [ -f /etc/os-release ]; then
+        . /etc/os-release
+        DISTRO=$NAME
+        if [[ $ID == "ubuntu" ]]; then
+            echo "Ubuntu detected"
+            IS_UBUNTU=1
+        elif [[ $ID == "opensuse"* ]]; then
+            echo "openSUSE detected"
+            IS_OPENSUSE=1
+        elif [[ $ID == "arch" ]]; then
+            echo "Arch Linux detected"
+            IS_ARCH=1
+        else
+            echo "Unsupported Linux distribution: $ID"
+            exit 1
+        fi
+    else
+        echo "Could not detect Linux distribution"
+        exit 1
     fi
-else
-    echo "Could not detect Linux distribution"
-    exit 1
-fi
+}
 
-# Install required dependencies based on detected distribution
 install_dependencies() {
     if [[ $IS_UBUNTU == 1 ]]; then
         sudo apt update
@@ -52,21 +51,20 @@ install_dependencies() {
         sudo zypper install -y ansible yadm git gpg
     elif [[ $IS_ARCH == 1 ]]; then
         sudo pacman -Syu --noconfirm ansible yadm git gnupg
-    else
-        echo "Unsupported Linux distribution for automated dependency installation"
-        exit 1
     fi
 }
 
-detect_arch
-install_dependencies
+install_ansible_collections() {
+    ansible-galaxy collection install community.general --force
+}
 
-# Ansible install
-pushd /home/$USER/.config/ansible_playbooks
+detect_arch
+detect_distro
+install_dependencies
+install_ansible_collections
+
+pushd "$HOME/.config/ansible_playbooks"
 ansible-playbook -v -i inventory.ini playbook.yml --become --ask-become-pass -e "ansible_user_name=$USER"
 popd
 
-# Call into post_install.sh
-pushd /home/$USER/.config/ansible_playbooks
 "$SCRIPT_DIR/post_install.sh"
-popd

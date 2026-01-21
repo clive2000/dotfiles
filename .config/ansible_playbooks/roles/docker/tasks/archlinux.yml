@@ -1,5 +1,14 @@
 ---
-# TODO: Implement Arch Linux support
-- name: Arch Linux support placeholder
-  debug:
-    msg: "Arch Linux support not yet implemented for this role"
+- name: Install Docker on Arch Linux
+  community.general.pacman:
+    name:
+      - docker
+      - docker-compose
+      - docker-buildx
+    state: present
+
+- name: Enable and start Docker service
+  ansible.builtin.systemd:
+    name: docker
+    enabled: true
+    state: started

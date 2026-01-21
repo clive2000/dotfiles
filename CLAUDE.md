@@ -4,23 +4,32 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-This is a cross-platform dotfiles repository using **yadm** (Yet Another Dotfiles Manager) with **Ansible** for automated provisioning. It supports macOS and Linux (Ubuntu, openSUSE, Arch).
+This is a cross-platform dotfiles repository using **yadm** (Yet Another Dotfiles Manager) with **Ansible** for automated provisioning.
+
+## Supported Platforms
+
+| Platform | Terminal Emulator | Notes |
+|----------|-------------------|-------|
+| macOS (Apple Silicon) | Ghostty | Homebrew cask |
+| Arch Linux | Ghostty | Official repos |
+| openSUSE Tumbleweed | Ghostty | Official repos |
+| Ubuntu | System default (no-op) | Uses default terminal |
 
 ## Key Commands
 
 ### Bootstrap (fresh machine setup)
 ```bash
-# One-liner install
-curl -sL https://raw.githubusercontent.com/clive2000/dotfiles/refs/heads/master/.config/bootstrap/run.sh | bash
+# One-liner install (prompts user to run yadm bootstrap)
+curl -sL https://raw.githubusercontent.com/clive2000/dotfiles/refs/heads/master/run.sh | bash
 
-# Manual: clone then bootstrap
-yadm clone https://github.com/clive2000/dotfiles.git --no-bootstrap
+# Then complete setup
 yadm bootstrap
 ```
 
 ### Run Ansible playbook manually
 ```bash
 cd ~/.config/ansible_playbooks
+# Requires ansible_user_name var
 ansible-playbook -v -i inventory.ini playbook.yml --become --ask-become-pass -e "ansible_user_name=$USER"
 ```
 
@@ -33,37 +42,36 @@ ansible-playbook --syntax-check ~/.config/ansible_playbooks/playbook.yml
 
 ### Bootstrap Flow
 ```
-.config/bootstrap/run.sh
+run.sh
     → installs yadm + dependencies
     → yadm clone (pulls dotfiles to $HOME)
-    → yadm bootstrap
+    → prompts user to run: yadm bootstrap
         → .config/yadm/bootstrap
-            → .config/scripts/install.sh##os.<OS>
+            → .config/scripts/install.sh (yadm selects OS variation)
                 → runs ansible-playbook
-                → .config/scripts/post_install.sh##os.<OS>
+                → .config/scripts/post_install.sh (yadm selects OS variation)
                     → git config setup
 ```
 
 ### OS-Specific Files
-Files with `##os.Darwin` or `##os.Linux` suffixes are yadm alternates—yadm automatically selects the correct one based on the OS.
+Files with `##os.Darwin` or `##os.Linux` suffixes are yadm alternates. Yadm automatically selects the correct one based on the OS during checkout/bootstrap.
 
 ### Ansible Roles (in `.config/ansible_playbooks/roles/`)
 | Role | Purpose |
 |------|---------|
-| `common` | Base packages, Oh My Zsh, Powerlevel10k, vim |
+| `common` | Base packages, Oh My Zsh, Powerlevel10k, vim, zsh config |
 | `docker` | Docker installation |
 | `github_cli` | GitHub CLI with GPG signing |
-| `terminal_emulator` | Ghostty (macOS) or Wezterm (Linux) |
-| `terminal_tools` | Modern CLI utilities via Homebrew |
+| `terminal_emulator` | Ghostty (macOS/Arch/openSUSE), no-op on Ubuntu |
+| `terminal_tools` | Modern CLI utilities via Homebrew/apt/zypper/pacman |
 | `vscode` | VS Code and Cursor editors |
 
 ### Brewfiles (in `.config/brewfiles/`)
-Modular Homebrew bundles: `minimal/`, `coding/`, `cloud/`, `entertainment/`
+Modular Homebrew bundles: `minimal/`, `coding/`, `cloud/`, `entertainment/`. They are available for manual installation but not currently enforced by the main playbook.
 
 ## Configuration Files
 
 - `.p10k.zsh` - Powerlevel10k prompt theme
 - `.config/aliases/shell.zsh` - Custom shell aliases
 - `.config/alacritty/alacritty.toml` - Alacritty terminal
-- `.config/wezterm/wezterm.lua` - Wezterm terminal
-- `.config/ghostty/config` - Ghostty terminal
+- `.config/ghostty/config` - Ghostty terminal (macOS)

@@ -1,20 +1,8 @@
-# Here we install terminal emulator
-# The decision logic on terminal emulator is like this
-# Under aarch64 arch, we install alacritty (Since likely this is runnign in my mac VM)
-# Under amd64 arch, we install kitty 
+---
+- name: Perform terminal emulator install for Linux distributions
+  include_tasks: "{{ ansible_facts['distribution'] | lower | replace(' ', '_') }}.yml"
+  when: ansible_facts['system'] == "Linux"
 
-
-
-# - name: Perform Kitty install when the arch is amd64 Linux
-#   include_tasks: "kitty.yml"
-#   when: ansible_architecture == "x86_64" and ansible_system == "Linux"
-
-- name: Perform wezterm install when the OS is linux
-  include_tasks: "wezterm.yml"
-  # when: ansible_architecture == "aarch64" and ansible_system == "Linux"
-  when: ansible_system == "Linux"
-
-- name: Perform Ghostty install when the OS is MacOS
-  include_tasks: "ghostty.yml"
-  # when: ansible_architecture == "arm64" and ansible_system == "Darwin"
-  when: ansible_system == "Darwin"
+- name: Perform terminal emulator install for macOS
+  include_tasks: "macosx.yml"
+  when: ansible_facts['system'] == "Darwin"

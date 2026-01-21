@@ -1,5 +1,5 @@
 ---
-# TODO: Implement Arch Linux support
-- name: Arch Linux support placeholder
-  debug:
-    msg: "Arch Linux support not yet implemented for this role"
+- name: Install GitHub CLI on Arch Linux
+  community.general.pacman:
+    name: github-cli
+    state: present
