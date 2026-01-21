@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -e
-set -x
 
 YADM_PATH="/usr/local/bin/yadm"
 
