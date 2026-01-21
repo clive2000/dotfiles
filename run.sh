@@ -43,6 +43,17 @@ install_xcode_cli_tools() {
     set -e
 }
 
+install_homebrew() {
+    if ! command -v brew >/dev/null 2>&1; then
+        echo "Installing Homebrew..."
+        NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+        echo 'eval $(/opt/homebrew/bin/brew shellenv)' >> "/Users/$USER/.zprofile"
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+    else
+        echo "Homebrew is already installed."
+    fi
+}
+
 install_git_linux() {
     if [ -f /etc/os-release ]; then
         . /etc/os-release
@@ -88,6 +99,7 @@ detect_os
 if [ "$OS" == "darwin" ]; then
     echo "Darwin detected"
     install_xcode_cli_tools
+    install_homebrew
 fi
 
 if [ "$OS" == "linux" ]; then
