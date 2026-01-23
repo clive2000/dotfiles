@@ -9,6 +9,7 @@
     - github_cli
     - terminal_emulator
     - terminal_tools
+    - llm_agents
   serial: 1
 
   pre_tasks:

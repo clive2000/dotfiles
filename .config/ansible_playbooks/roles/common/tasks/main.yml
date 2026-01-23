@@ -163,6 +163,16 @@
     state: present
   become: false
 
+- name: Source custom shell aliases
+  blockinfile:
+    path: "{{ home_dir }}/.zshrc"
+    block: |
+      source ~/.config/aliases/shell.zsh
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - Custom Shell Aliases"
+    insertafter: EOF
+    create: false
+  become: false
+
 - name: Install p10k theme # noqa: latest
   become: false
   ansible.builtin.git:
