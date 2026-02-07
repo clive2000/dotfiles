@@ -2,7 +2,7 @@
 
 set -e
 
-YADM_PATH="/usr/local/bin/yadm"
+GITHUB_USERNAME="clive2000"
 
 detect_os() {
     local os=$(uname -s)
@@ -19,13 +19,6 @@ detect_os() {
             exit 1
             ;;
     esac
-}
-
-install_yadm() {
-    echo "Installing yadm to $YADM_PATH..."
-    sudo mkdir -p /usr/local/bin
-    sudo curl -fLo "$YADM_PATH" https://github.com/yadm-dev/yadm/raw/master/yadm
-    sudo chmod a+x "$YADM_PATH"
 }
 
 install_xcode_cli_tools() {
@@ -77,19 +70,15 @@ install_git_linux() {
     fi
 }
 
-clone_dotfiles() {
-    echo "Cloning dotfiles repository..."
-    "$YADM_PATH" clone --verbose https://github.com/clive2000/dotfiles.git --no-bootstrap
+install_chezmoi() {
+    echo "Installing chezmoi..."
+    sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin"
+    export PATH="$HOME/.local/bin:$PATH"
 }
 
-prompt_bootstrap() {
-    echo ""
-    echo "=============================================="
-    echo "Dotfiles cloned successfully!"
-    echo ""
-    echo "To complete the setup, run:"
-    echo "    yadm bootstrap"
-    echo "=============================================="
+init_chezmoi() {
+    echo "Initializing chezmoi with dotfiles..."
+    "$HOME/.local/bin/chezmoi" init --apply "$GITHUB_USERNAME"
 }
 
 detect_os
@@ -105,6 +94,13 @@ if [ "$OS" == "linux" ]; then
     install_git_linux
 fi
 
-install_yadm
-clone_dotfiles
-prompt_bootstrap
+install_chezmoi
+init_chezmoi
+
+echo ""
+echo "=============================================="
+echo "Dotfiles installed successfully!"
+echo ""
+echo "chezmoi has been initialized and applied."
+echo "Your environment is now configured."
+echo "=============================================="

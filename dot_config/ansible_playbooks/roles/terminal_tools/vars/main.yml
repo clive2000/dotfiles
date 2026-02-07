@@ -124,5 +124,5 @@ cli_common_packages_macosx:
   - "onefetch"
   - "cheat"
   - "navi"
-  - "yadm"
+  - "chezmoi"
   - "yazi"

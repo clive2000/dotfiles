@@ -1,5 +1,0 @@
-#!/bin/sh
-
-echo 'This is the default version of the shell, it will have limited functionality"
-
-

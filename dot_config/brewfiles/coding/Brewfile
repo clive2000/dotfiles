@@ -3,3 +3,4 @@
 
 # uv
 brew "uv"
+brew "lazygit"

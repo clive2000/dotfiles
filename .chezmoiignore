@@ -1,0 +1,8 @@
+# Files that should not be managed by chezmoi (repo-only files)
+README.md
+CLAUDE.md
+LICENSE
+run.sh
+.git
+.gitignore
+.vscode

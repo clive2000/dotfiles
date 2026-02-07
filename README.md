@@ -1,55 +1,63 @@
-xhuang's dotfiles
+# xhuang's dotfiles
 
-## Install yadm
+Managed with [chezmoi](https://www.chezmoi.io/) and provisioned with [Ansible](https://www.ansible.com/).
+
+## Quick Start (Fresh Machine)
+
+### One-liner install
+
+Using curl:
+```bash
+curl -sL https://raw.githubusercontent.com/clive2000/dotfiles/refs/heads/chezmoi/run.sh | bash
+```
+
+Using wget:
+```bash
+wget -qO- https://raw.githubusercontent.com/clive2000/dotfiles/refs/heads/chezmoi/run.sh | bash
+```
+
+This will:
+1. Install prerequisites (Xcode CLI tools on macOS, git on Linux)
+2. Install Homebrew (macOS only)
+3. Install chezmoi
+4. Clone and apply dotfiles
+5. Run Ansible playbook to provision the machine
+6. Configure git with your name and email
+
+### Alternative: Direct chezmoi (if chezmoi is already installed)
 
 ```bash
-sudo mkdir -p /usr/local/bin
-sudo curl -fLo /usr/local/bin/yadm https://github.com/yadm-dev/yadm/raw/master/yadm && sudo chmod a+x /usr/local/bin/yadm
+chezmoi init --apply clive2000
 ```
 
-## Install xcode command line tools
+## Manual Ansible Playbook
+
+To re-run the Ansible playbook manually:
 
 ```bash
-xcode-select -p &> /dev/null
-if [ $? -ne 0 ]; then
-  echo "Command Line Tools for Xcode not found. Installing from softwareupdate…"
-# This temporary file prompts the 'softwareupdate' utility to list the Command Line Tools
-  touch /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress;
-  PROD=$(softwareupdate -l | grep "\*.*Command Line" | tail -n 1 | sed 's/^[^C]* //')
-  softwareupdate -i "$PROD" --verbose;
-else
-  echo "Command Line Tools for Xcode have been installed."
-fi
+cd ~/.config/ansible_playbooks
+ansible-playbook -v -i inventory.ini playbook.yml --become --ask-become-pass -e "ansible_user_name=$USER"
 ```
 
-## Scripts
+## Supported Platforms
 
-wget
+| Platform | Terminal Emulator | Notes |
+|----------|-------------------|-------|
+| macOS (Apple Silicon) | Ghostty | Homebrew cask |
+| Arch Linux | Ghostty | Official repos |
+| openSUSE Tumbleweed | Ghostty | Official repos |
+| Ubuntu | System default | Uses default terminal |
 
-```
-wget -qO- https://raw.githubusercontent.com/clive2000/dotfiles/refs/heads/master/run.sh | bash
-```
+## Update Dotfiles
 
-OR 
-
-```
-wget -q https://raw.githubusercontent.com/clive2000/dotfiles/refs/heads/master/run.sh -O run.sh
-bash run.sh
-```
-
-curl
-
-```
-curl -sL https://raw.githubusercontent.com/clive2000/dotfiles/refs/heads/master/run.sh | bash
+```bash
+chezmoi update
 ```
 
-OR
+## Add New Dotfiles
 
+```bash
+chezmoi add ~/.some-config-file
+chezmoi cd
+git add . && git commit -m "Add some-config-file" && git push
 ```
-curl -sLO https://raw.githubusercontent.com/clive2000/dotfiles/refs/heads/master/run.sh
-bash run.sh
-```
-
-## Post-install
-
-On MacOS, please re-run `yadm bootstrap` after bootstrap process.
