@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# This script configures git with user name and email
+# It runs AFTER dotfiles are applied
+
+set -e
+
+echo "Configuring git..."
+
+git config --global user.name "{{ .git.name }}"
+git config --global user.email "{{ .git.email }}"
+
+echo "Git configured with:"
+echo "  user.name: {{ .git.name }}"
+echo "  user.email: {{ .git.email }}"

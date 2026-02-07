@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-This is a cross-platform dotfiles repository using **yadm** (Yet Another Dotfiles Manager) with **Ansible** for automated provisioning.
+This is a cross-platform dotfiles repository using **chezmoi** for dotfile management with **Ansible** for automated provisioning.
 
 ## Supported Platforms
 
@@ -19,11 +19,11 @@ This is a cross-platform dotfiles repository using **yadm** (Yet Another Dotfile
 
 ### Bootstrap (fresh machine setup)
 ```bash
-# One-liner install (prompts user to run yadm bootstrap)
-curl -sL https://raw.githubusercontent.com/clive2000/dotfiles/refs/heads/master/run.sh | bash
+# One-liner install (installs chezmoi and applies dotfiles)
+curl -sL https://raw.githubusercontent.com/clive2000/dotfiles/refs/heads/chezmoi/run.sh | bash
 
-# Then complete setup
-yadm bootstrap
+# Or if chezmoi is already installed:
+chezmoi init --apply clive2000
 ```
 
 ### Run Ansible playbook manually
@@ -43,20 +43,25 @@ ansible-playbook --syntax-check ~/.config/ansible_playbooks/playbook.yml
 ### Bootstrap Flow
 ```
 run.sh
-    → installs yadm + dependencies
-    → yadm clone (pulls dotfiles to $HOME)
-    → prompts user to run: yadm bootstrap
-        → .config/yadm/bootstrap
-            → .config/scripts/install.sh (yadm selects OS variation)
-                → runs ansible-playbook
-                → .config/scripts/post_install.sh (yadm selects OS variation)
-                    → git config setup
+    → installs chezmoi + dependencies (Xcode CLI, Homebrew, git)
+    → chezmoi init --apply clive2000
+        → prompts for git name/email (.chezmoi.toml.tmpl)
+        → run_once_before_10-install-dependencies.sh.tmpl
+            → installs Ansible
+            → runs ansible-playbook (provisions machine)
+        → applies dotfiles (dot_p10k.zsh → ~/.p10k.zsh, etc.)
+        → run_once_after_90-configure-git.sh.tmpl
+            → git config setup
 ```
 
-### OS-Specific Files
-Files with `##os.Darwin` or `##os.Linux` suffixes are yadm alternates. Yadm automatically selects the correct one based on the OS during checkout/bootstrap.
+### Chezmoi File Naming Conventions
+- `dot_` prefix → becomes `.` (e.g., `dot_p10k.zsh` → `~/.p10k.zsh`)
+- `dot_config/` → `~/.config/`
+- `.tmpl` suffix → processed as Go template
+- `run_once_before_*` → scripts that run once before applying dotfiles
+- `run_once_after_*` → scripts that run once after applying dotfiles
 
-### Ansible Roles (in `.config/ansible_playbooks/roles/`)
+### Ansible Roles (in `dot_config/ansible_playbooks/roles/`)
 | Role | Purpose |
 |------|---------|
 | `common` | Base packages, Oh My Zsh, Powerlevel10k, vim, zsh config |
@@ -65,13 +70,33 @@ Files with `##os.Darwin` or `##os.Linux` suffixes are yadm alternates. Yadm auto
 | `terminal_emulator` | Ghostty (macOS/Arch/openSUSE), no-op on Ubuntu |
 | `terminal_tools` | Modern CLI utilities via Homebrew/apt/zypper/pacman |
 | `vscode` | VS Code and Cursor editors |
+| `llm_agents` | LLM-related tools |
 
-### Brewfiles (in `.config/brewfiles/`)
+### Brewfiles (in `dot_config/brewfiles/`)
 Modular Homebrew bundles: `minimal/`, `coding/`, `cloud/`, `entertainment/`. They are available for manual installation but not currently enforced by the main playbook.
 
 ## Configuration Files
 
-- `.p10k.zsh` - Powerlevel10k prompt theme
-- `.config/aliases/shell.zsh` - Custom shell aliases
-- `.config/alacritty/alacritty.toml` - Alacritty terminal
-- `.config/ghostty/config` - Ghostty terminal (macOS)
+- `dot_p10k.zsh` → `~/.p10k.zsh` - Powerlevel10k prompt theme
+- `dot_config/aliases/shell.zsh` → `~/.config/aliases/shell.zsh` - Custom shell aliases
+- `dot_config/ghostty/config` → `~/.config/ghostty/config` - Ghostty terminal
+
+## Chezmoi Source Directory Structure
+
+```
+/                                    # This repo = chezmoi source
+├── .chezmoi.toml.tmpl               # Config template (prompts for git name/email)
+├── .chezmoiignore                   # Files to not deploy to $HOME
+├── .chezmoiscripts/                 # Run-once scripts
+│   ├── run_once_before_10-install-dependencies.sh.tmpl
+│   └── run_once_after_90-configure-git.sh.tmpl
+├── dot_p10k.zsh                     # → ~/.p10k.zsh
+├── dot_config/                      # → ~/.config/
+│   ├── aliases/shell.zsh
+│   ├── ansible_playbooks/           # Ansible provisioning (unchanged)
+│   ├── brewfiles/
+│   └── ghostty/config
+├── run.sh                           # Bootstrap entry point (not deployed)
+├── README.md                        # Documentation (not deployed)
+└── CLAUDE.md                        # This file (not deployed)
+```

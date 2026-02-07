@@ -10,8 +10,8 @@
     name: codex
     state: present
 
-- name: Install OpenCode via Homebrew tap
+- name: Install OpenCode via Homebrew
   become: false
   community.general.homebrew:
-    name: anomalyco/tap/opencode
+    name: opencode
     state: present

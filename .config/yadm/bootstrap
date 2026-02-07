@@ -1,7 +1,0 @@
-#!/bin/sh
-
-# Check OS, if 
-
-# Call into $HOME/.config/scripts/install.sh
-
-"$HOME"/.config/scripts/install.sh

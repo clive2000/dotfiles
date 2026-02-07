@@ -45,7 +45,7 @@ brew "entr"
 brew "rclone"
 brew "restic"
 brew "onefetch"
-brew "yadm"
+brew "chezmoi"
 
 
 # Cask
