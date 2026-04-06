@@ -46,6 +46,7 @@ brew "rclone"
 brew "restic"
 brew "onefetch"
 brew "chezmoi"
+brew "zellij"
 
 
 # Cask
