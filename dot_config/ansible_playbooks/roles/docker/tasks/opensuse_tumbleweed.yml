@@ -1,7 +1,0 @@
-- name: Install essential packages (Suse)
-  community.general.zypper:
-    name:
-      - docker
-      - docker-compose
-      - docker-compose-switch
-    state: present

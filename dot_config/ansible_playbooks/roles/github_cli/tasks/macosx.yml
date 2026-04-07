@@ -1,6 +1,0 @@
-- name: Install common packages on MacOSX
-  become: false
-  community.general.homebrew:
-    name:
-      - gh
-    state: present

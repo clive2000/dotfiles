@@ -1,6 +1,0 @@
----
-- name: Install Ghostty on macOS
-  become: false
-  community.general.homebrew_cask:
-    name: ghostty
-    state: present
