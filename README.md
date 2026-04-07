@@ -1,52 +1,37 @@
 # xhuang's dotfiles
 
-Managed with [chezmoi](https://www.chezmoi.io/) and provisioned with [Ansible](https://www.ansible.com/).
+Configuration files managed with [chezmoi](https://www.chezmoi.io/).
 
-## Quick Start (Fresh Machine)
+For machine provisioning (software installation), see [provision](https://github.com/clive2000/provision).
 
-### One-liner install
+## Quick Start
 
-Using curl:
+### Apply dotfiles only
+
 ```bash
+# One-liner (installs chezmoi and applies dotfiles)
 curl -sL https://raw.githubusercontent.com/clive2000/dotfiles/refs/heads/chezmoi/run.sh | bash
-```
 
-Using wget:
-```bash
-wget -qO- https://raw.githubusercontent.com/clive2000/dotfiles/refs/heads/chezmoi/run.sh | bash
-```
-
-This will:
-1. Install prerequisites (Xcode CLI tools on macOS, git on Linux)
-2. Install Homebrew (macOS only)
-3. Install chezmoi
-4. Clone and apply dotfiles
-5. Run Ansible playbook to provision the machine
-6. Configure git with your name and email
-
-### Alternative: Direct chezmoi (if chezmoi is already installed)
-
-```bash
+# Or if chezmoi is already installed:
 chezmoi init --apply clive2000
 ```
 
-## Manual Ansible Playbook
-
-To re-run the Ansible playbook manually:
+### Full machine setup (provisioning + dotfiles)
 
 ```bash
-cd ~/.config/ansible_playbooks
-ansible-playbook -v -i inventory.ini playbook.yml --become --ask-become-pass -e "ansible_user_name=$USER"
+# Uses the provision repo's bootstrap script
+curl -sL https://raw.githubusercontent.com/clive2000/provision/refs/heads/main/run.sh | bash
 ```
 
-## Supported Platforms
+## What's Included
 
-| Platform | Terminal Emulator | Notes |
-|----------|-------------------|-------|
-| macOS (Apple Silicon) | Ghostty | Homebrew cask |
-| Arch Linux | Ghostty | Official repos |
-| openSUSE Tumbleweed | Ghostty | Official repos |
-| Ubuntu | System default | Uses default terminal |
+| Config | Source | Destination |
+|--------|--------|-------------|
+| Powerlevel10k | `dot_p10k.zsh` | `~/.p10k.zsh` |
+| Shell aliases | `dot_config/aliases/shell.zsh` | `~/.config/aliases/shell.zsh` |
+| Ghostty | `dot_config/ghostty/config` | `~/.config/ghostty/config` |
+| Zellij | `dot_config/zellij/config.kdl` | `~/.config/zellij/config.kdl` |
+| Git config | `run_once_after_90` | `~/.gitconfig` (user.name/email) |
 
 ## Update Dotfiles
 
@@ -61,3 +46,7 @@ chezmoi add ~/.some-config-file
 chezmoi cd
 git add . && git commit -m "Add some-config-file" && git push
 ```
+
+## Related
+
+- **[provision](https://github.com/clive2000/provision)** — Machine provisioning with Ansible

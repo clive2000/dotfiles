@@ -1,6 +1,7 @@
 # Files that should not be managed by chezmoi (repo-only files)
 README.md
 CLAUDE.md
+AGENTS.md
 LICENSE
 run.sh
 .git

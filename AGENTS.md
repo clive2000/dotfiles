@@ -2,84 +2,72 @@
 
 This file provides guidance to AI coding agents (e.g. OpenAI Codex, Cursor, etc.) when working with code in this repository.
 
+## Mandatory Rules
+
+> ⚠️ **RULE: All changes MUST be made in a feature branch.**
+> Never commit directly to `main` (or `chezmoi`, or any other trunk branch).
+> Always create a dedicated feature branch before making any edits, e.g.:
+> ```bash
+> git checkout -b feature/<short-description>
+> ```
+> Open a pull request to merge the feature branch back into the trunk branch when the work is complete.
+
 ## Overview
 
-This is a cross-platform dotfiles repository using **chezmoi** for dotfile management with **Ansible** for automated provisioning.
+This is a cross-platform dotfiles repository using **chezmoi** for dotfile management. It manages **configuration files only** — software provisioning is handled separately by the [provision](https://github.com/clive2000/provision) repo.
 
 ## Supported Platforms
 
-| Platform | Terminal Emulator | Notes |
-|----------|-------------------|-------|
-| macOS (Apple Silicon) | Ghostty | Homebrew cask |
-| Arch Linux | Ghostty | Official repos |
-| openSUSE Tumbleweed | Ghostty | Official repos |
-| Ubuntu | System default (no-op) | Uses default terminal |
+| Platform | Notes |
+|----------|-------|
+| macOS (Apple Silicon) | Homebrew |
+| Arch Linux | Official repos |
+| openSUSE Tumbleweed | Official repos |
+| Ubuntu | apt |
 
 ## Key Commands
 
-### Bootstrap (fresh machine setup)
+### Apply dotfiles
 ```bash
 # One-liner install (installs chezmoi and applies dotfiles)
 curl -sL https://raw.githubusercontent.com/clive2000/dotfiles/refs/heads/chezmoi/run.sh | bash
 
 # Or if chezmoi is already installed:
 chezmoi init --apply clive2000
+
+# Re-apply after changes:
+chezmoi apply
 ```
 
-### Run Ansible playbook manually
+### Full machine setup (provisioning + dotfiles)
 ```bash
-cd ~/.config/ansible_playbooks
-# Requires ansible_user_name var
-ansible-playbook -v -i inventory.ini playbook.yml --become --ask-become-pass -e "ansible_user_name=$USER"
-```
-
-### Validate Ansible syntax
-```bash
-ansible-playbook --syntax-check ~/.config/ansible_playbooks/playbook.yml
+# Use the provision repo's bootstrap script:
+curl -sL https://raw.githubusercontent.com/clive2000/provision/refs/heads/main/run.sh | bash
 ```
 
 ## Architecture
 
-### Bootstrap Flow
+### Dotfiles Flow
 ```
-run.sh
-    → installs chezmoi + dependencies (Xcode CLI, Homebrew, git)
-    → chezmoi init --apply clive2000
-        → prompts for git name/email (.chezmoi.toml.tmpl)
-        → run_once_before_10-install-dependencies.sh.tmpl
-            → installs Ansible
-            → runs ansible-playbook (provisions machine)
-        → applies dotfiles (dot_p10k.zsh → ~/.p10k.zsh, etc.)
-        → run_once_after_90-configure-git.sh.tmpl
-            → git config setup
+chezmoi init --apply clive2000
+    → prompts for git name/email (.chezmoi.toml.tmpl)
+    → applies dotfiles (dot_p10k.zsh → ~/.p10k.zsh, etc.)
+    → run_once_after_90-configure-git.sh.tmpl
+        → git config setup
 ```
 
 ### Chezmoi File Naming Conventions
 - `dot_` prefix → becomes `.` (e.g., `dot_p10k.zsh` → `~/.p10k.zsh`)
 - `dot_config/` → `~/.config/`
 - `.tmpl` suffix → processed as Go template
-- `run_once_before_*` → scripts that run once before applying dotfiles
 - `run_once_after_*` → scripts that run once after applying dotfiles
-
-### Ansible Roles (in `dot_config/ansible_playbooks/roles/`)
-| Role | Purpose |
-|------|---------|
-| `common` | Base packages, Oh My Zsh, Powerlevel10k, vim, zsh config |
-| `docker` | Docker installation |
-| `github_cli` | GitHub CLI with GPG signing |
-| `terminal_emulator` | Ghostty (macOS/Arch/openSUSE), no-op on Ubuntu |
-| `terminal_tools` | Modern CLI utilities via Homebrew/apt/zypper/pacman |
-| `vscode` | VS Code and Cursor editors |
-| `llm_agents` | LLM-related tools |
-
-### Brewfiles (in `dot_config/brewfiles/`)
-Modular Homebrew bundles: `minimal/`, `coding/`, `cloud/`, `entertainment/`. They are available for manual installation but not currently enforced by the main playbook.
 
 ## Configuration Files
 
 - `dot_p10k.zsh` → `~/.p10k.zsh` - Powerlevel10k prompt theme
 - `dot_config/aliases/shell.zsh` → `~/.config/aliases/shell.zsh` - Custom shell aliases
 - `dot_config/ghostty/config` → `~/.config/ghostty/config` - Ghostty terminal
+- `dot_config/zellij/config.kdl` → `~/.config/zellij/config.kdl` - Zellij multiplexer
 
 ## Chezmoi Source Directory Structure
 
@@ -87,17 +75,19 @@ Modular Homebrew bundles: `minimal/`, `coding/`, `cloud/`, `entertainment/`. The
 /                                    # This repo = chezmoi source
 ├── .chezmoi.toml.tmpl               # Config template (prompts for git name/email)
 ├── .chezmoiignore                   # Files to not deploy to $HOME
-├── .chezmoiscripts/                 # Run-once scripts
-│   ├── run_once_before_10-install-dependencies.sh.tmpl
+├── .chezmoiscripts/
 │   └── run_once_after_90-configure-git.sh.tmpl
 ├── dot_p10k.zsh                     # → ~/.p10k.zsh
 ├── dot_config/                      # → ~/.config/
 │   ├── aliases/shell.zsh
-│   ├── ansible_playbooks/           # Ansible provisioning (unchanged)
-│   ├── brewfiles/
-│   └── ghostty/config
-├── run.sh                           # Bootstrap entry point (not deployed)
+│   ├── ghostty/config
+│   └── zellij/config.kdl
+├── run.sh                           # Dotfiles-only bootstrap (not deployed)
 ├── README.md                        # Documentation (not deployed)
 ├── CLAUDE.md                        # Guidance for Claude Code (not deployed)
 └── AGENTS.md                        # This file (not deployed)
 ```
+
+## Related
+
+- **[provision](https://github.com/clive2000/provision)** — Machine provisioning with Ansible (software installation)

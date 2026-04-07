@@ -1,6 +1,0 @@
-# Coding
-# cask "temurin@17"
-
-# uv
-brew "uv"
-brew "lazygit"
