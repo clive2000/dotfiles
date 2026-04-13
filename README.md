@@ -10,7 +10,7 @@ For machine provisioning (software installation), see [provision](https://github
 
 ```bash
 # One-liner (installs chezmoi and applies dotfiles)
-curl -sL https://raw.githubusercontent.com/clive2000/dotfiles/refs/heads/chezmoi/run.sh | bash
+curl -sL https://raw.githubusercontent.com/clive2000/dotfiles/refs/heads/main/run.sh | bash
 
 # Or if chezmoi is already installed:
 chezmoi init --apply clive2000

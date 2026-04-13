@@ -30,7 +30,7 @@ This is a cross-platform dotfiles repository using **chezmoi** for dotfile manag
 ### Apply dotfiles
 ```bash
 # One-liner install (installs chezmoi and applies dotfiles)
-curl -sL https://raw.githubusercontent.com/clive2000/dotfiles/refs/heads/chezmoi/run.sh | bash
+curl -sL https://raw.githubusercontent.com/clive2000/dotfiles/refs/heads/main/run.sh | bash
 
 # Or if chezmoi is already installed:
 chezmoi init --apply clive2000

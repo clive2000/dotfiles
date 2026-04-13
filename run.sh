@@ -5,6 +5,11 @@
 
 set -e
 
+if ! command -v git >/dev/null 2>&1; then
+    echo "Error: git is not installed. Please install git first and re-run this script."
+    exit 1
+fi
+
 GITHUB_USERNAME="clive2000"
 
 install_chezmoi() {
