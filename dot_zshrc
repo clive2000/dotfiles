@@ -26,3 +26,6 @@ export PATH="$HOME/.local/bin:$PATH"
 
 # zoxide
 command -v zoxide &>/dev/null && eval "$(zoxide init zsh)"
+
+# atuin
+command -v atuin &>/dev/null && eval "$(atuin init zsh)"
