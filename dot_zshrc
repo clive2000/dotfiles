@@ -12,3 +12,8 @@ export PATH="$HOME/.local/bin:$PATH"
 
 # Aliases
 [ -f "$HOME/.config/aliases/shell.zsh" ] && source "$HOME/.config/aliases/shell.zsh"
+
+# Secrets
+
+# zoxide
+command -v zoxide &>/dev/null && eval "$(zoxide init zsh)"
