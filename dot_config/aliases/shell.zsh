@@ -7,3 +7,6 @@ alias lla="eza -l -a"
 
 # cd
 alias cd="z"
+
+# claude code
+alias dclaude="claude --dangerously-skip-permissions"
